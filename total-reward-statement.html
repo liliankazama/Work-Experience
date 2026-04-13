@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Total Reward Statement</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:      #1a3c5e;
+      --accent:     #f5a623;
+      --accent2:    #4caf82;
+      --accent3:    #5b7fe8;
+      --bg:         #f4f6f9;
+      --card:       #ffffff;
+      --text:       #1f2d3d;
+      --muted:      #6b7a8d;
+      --border:     #dde3ec;
+      --radius:     12px;
+      --shadow:     0 4px 18px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .page-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .header {
+      background: var(--brand);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-logo {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    .header-logo span { color: var(--accent); }
+
+    .header-info { text-align: right; }
+    .header-info h1 { font-size: 1.3rem; font-weight: 700; }
+    .header-info p  { font-size: .85rem; opacity: .75; margin-top: 4px; }
+
+    /* ── Employee card ────────────────────────────────────────── */
+    .employee-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .emp-field label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .emp-field span {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── Section headings ─────────────────────────────────────── */
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      color: var(--brand);
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .icon {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .95rem;
+    }
+
+    /* ── Grid helpers ─────────────────────────────────────────── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .header  { flex-direction: column; text-align: center; }
+      .header-info { text-align: center; }
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Line items ───────────────────────────────────────────── */
+    .line-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .line-item:last-child { border-bottom: none; }
+
+    .line-item .label { font-size: .9rem; color: var(--text); }
+    .line-item .sub   { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+
+    .line-item .amount {
+      font-size: .95rem;
+      font-weight: 700;
+      white-space: nowrap;
+      color: var(--brand);
+    }
+
+    .line-item .badge {
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #eaf3ff;
+      color: var(--accent3);
+      white-space: nowrap;
+    }
+
+    /* ── Total boxes ──────────────────────────────────────────── */
+    .total-box {
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .total-box.primary  { background: var(--brand); color: #fff; }
+    .total-box.accent   { background: var(--accent2); color: #fff; }
+    .total-box.neutral  { background: #eef1f7; color: var(--brand); }
+
+    .total-box .t-label { font-size: .8rem; font-weight: 700; opacity: .85; text-transform: uppercase; letter-spacing: .6px; }
+    .total-box .t-value { font-size: 1.5rem; font-weight: 800; }
+
+    /* ── Stock options table ──────────────────────────────────── */
+    .stock-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+
+    .stock-table th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #f0f4fa;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .stock-table td {
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .stock-table tr:last-child td { border-bottom: none; }
+    .stock-table td.val { font-weight: 700; color: var(--brand); }
+
+    /* ── Benefit pills ────────────────────────────────────────── */
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #f7f9fc;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .benefit-item .b-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .benefit-item .b-label  { font-size: .85rem; font-weight: 700; }
+    .benefit-item .b-detail { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+    .benefit-item .b-value  { font-size: .8rem; font-weight: 700; color: var(--accent2); margin-top: 4px; }
+
+    /* ── Donut chart ──────────────────────────────────────────── */
+    .chart-wrap {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .donut-svg { flex-shrink: 0; }
+
+    .legend { display: flex; flex-direction: column; gap: 8px; }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .82rem;
+    }
+
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-item .l-name  { flex: 1; color: var(--text); }
+    .legend-item .l-val   { font-weight: 700; color: var(--brand); }
+    .legend-item .l-pct   { color: var(--muted); font-size: .75rem; min-width: 36px; text-align: right; }
+
+    /* ── Timeline (vesting) ───────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin-top: 6px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px; top: 6px; bottom: 6px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .tl-item {
+      position: relative;
+      padding-bottom: 18px;
+    }
+
+    .tl-item:last-child { padding-bottom: 0; }
+
+    .tl-dot {
+      position: absolute;
+      left: -24px; top: 4px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--card);
+      background: var(--brand);
+    }
+
+    .tl-dot.done   { background: var(--accent2); }
+    .tl-dot.future { background: var(--border); }
+
+    .tl-item .tl-date  { font-size: .75rem; color: var(--muted); font-weight: 700; }
+    .tl-item .tl-label { font-size: .88rem; font-weight: 600; }
+    .tl-item .tl-sub   { font-size: .78rem; color: var(--muted); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .footer {
+      margin-top: 36px;
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      padding: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Print ────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .page-wrap { padding: 16px; }
+      .card, .employee-card { box-shadow: none; border: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <div class="header">
+    <div class="header-logo">My<span>Company</span></div>
+    <div class="header-info">
+      <h1>Total Reward Statement</h1>
+      <p>Performance Year 2025 &nbsp;|&nbsp; Confidential</p>
+    </div>
+  </div>
+
+  <!-- ── Employee Info ──────────────────────────────────────── -->
+  <div class="employee-card">
+    <div class="emp-field">
+      <label>Employee</label>
+      <span>Lilian Kazama</span>
+    </div>
+    <div class="emp-field">
+      <label>Job Title</label>
+      <span>Senior Software Engineer</span>
+    </div>
+    <div class="emp-field">
+      <label>Department</label>
+      <span>Engineering</span>
+    </div>
+    <div class="emp-field">
+      <label>Location</label>
+      <span>São Paulo, BR</span>
+    </div>
+    <div class="emp-field">
+      <label>Hire Date</label>
+      <span>Mar 15, 2021</span>
+    </div>
+    <div class="emp-field">
+      <label>Statement Date</label>
+      <span>Apr 13, 2026</span>
+    </div>
+  </div>
+
+  <!-- ── Grand Total Banner ─────────────────────────────────── -->
+  <div class="card" style="margin-bottom:28px">
+    <p class="section-title">
+      <span class="icon" style="background:#e8f0fe">&#127942;</span>
+      Your Total Reward Value
+    </p>
+    <div class="chart-wrap">
+      <!-- Donut chart (pure SVG) -->
+      <svg class="donut-svg" viewBox="0 0 160 160" width="160" height="160">
+        <circle cx="80" cy="80" r="60" fill="none" stroke="#eef1f7" stroke-width="28"/>
+        <!-- Base Salary  62%  → 233.63 of 377.0 circumference -->
+        <circle cx="80" cy="80" r="60" fill="none" stroke="#1a3c5e" stroke-width="28"
+                stroke-dasharray="233.63 143.37" stroke-dashoffset="94.25"
+                transform="rotate(-90 80 80)"/>
+        <!-- Bonus        10%  → 37.70 -->
+        <circle cx="80" cy="80" r="60" fill="none" stroke="#f5a623" stroke-width="28"
+                stroke-dasharray="37.70 339.30" stroke-dashoffset="-139.38"
+                transform="rotate(-90 80 80)"/>
+        <!-- Stock        17%  → 64.09 -->
+        <circle cx="80" cy="80" r="60" fill="none" stroke="#5b7fe8" stroke-width="28"
+                stroke-dasharray="64.09 312.91" stroke-dashoffset="-177.08"
+                transform="rotate(-90 80 80)"/>
+        <!-- Benefits     11%  → 41.47 -->
+        <circle cx="80" cy="80" r="60" fill="none" stroke="#4caf82" stroke-width="28"
+                stroke-dasharray="41.47 335.53" stroke-dashoffset="-241.17"
+                transform="rotate(-90 80 80)"/>
+        <text x="80" y="75" text-anchor="middle" font-size="13" font-weight="800" fill="#1a3c5e">R$ 580K</text>
+        <text x="80" y="93" text-anchor="middle" font-size="9" fill="#6b7a8d">Total / year</text>
+      </svg>
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#1a3c5e"></div>
+          <span class="l-name">Base Salary</span>
+          <span class="l-val">R$ 360K</span>
+          <span class="l-pct">62%</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#f5a623"></div>
+          <span class="l-name">Annual Bonus</span>
+          <span class="l-val">R$ 58K</span>
+          <span class="l-pct">10%</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#5b7fe8"></div>
+          <span class="l-name">Stock Options</span>
+          <span class="l-val">R$ 99K</span>
+          <span class="l-pct">17%</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#4caf82"></div>
+          <span class="l-name">Benefits &amp; Perks</span>
+          <span class="l-val">R$ 63K</span>
+          <span class="l-pct">11%</span>
+        </div>
+      </div>
+    </div>
+    <div class="total-box primary" style="margin-top:20px">
+      <span class="t-label">Total Annualised Value</span>
+      <span class="t-value">R$ 580,000</span>
+    </div>
+  </div>
+
+  <!-- ── Row 1: Compensation + Bonus ───────────────────────── -->
+  <div class="grid-2">
+
+    <!-- Base Salary -->
+    <div class="card">
+      <p class="section-title">
+        <span class="icon" style="background:#e8f0fe">&#128176;</span>
+        Base Compensation
+      </p>
+      <div class="line-item">
+        <div>
+          <div class="label">Monthly Base Salary</div>
+          <div class="sub">Gross, before taxes</div>
+        </div>
+        <span class="amount">R$ 30,000</span>
+      </div>
+      <div class="line-item">
+        <div>
+          <div class="label">13th Month Salary</div>
+          <div class="sub">Mandatory (CLT)</div>
+        </div>
+        <span class="amount">R$ 30,000</span>
+      </div>
+      <div class="line-item">
+        <div>
+          <div class="label">Vacation Pay</div>
+          <div class="sub">30 days + 1/3 constitutional</div>
+        </div>
+        <span class="amount">R$ 40,000</span>
+      </div>
+      <div class="total-box neutral">
+        <span class="t-label">Annual Base Total</span>
+        <span class="t-value" style="font-size:1.2rem">R$ 360,000</span>
+      </div>
+    </div>
+
+    <!-- Bonus -->
+    <div class="card">
+      <p class="section-title">
+        <span class="icon" style="background:#fff4e0">&#127942;</span>
+        Variable Pay &amp; Bonus
+      </p>
+      <div class="line-item">
+        <div>
+          <div class="label">Annual Performance Bonus</div>
+          <div class="sub">Target: 15% of base salary</div>
+        </div>
+        <span class="amount">R$ 45,000</span>
+      </div>
+      <div class="line-item">
+        <div>
+          <div class="label">Q4 Spot Bonus</div>
+          <div class="sub">Discretionary award</div>
+        </div>
+        <span class="amount">R$ 8,000</span>
+      </div>
+      <div class="line-item">
+        <div>
+          <div class="label">Profit Sharing (PLR)</div>
+          <div class="sub">Participação nos Lucros</div>
+        </div>
+        <span class="amount">R$ 5,000</span>
+      </div>
+      <div class="total-box" style="background:#fff4e0; color:#7a4f00; margin-top:14px">
+        <span class="t-label" style="opacity:.8">Bonus Total (2025)</span>
+        <span class="t-value" style="font-size:1.2rem">R$ 58,000</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Stock Options ──────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:20px">
+    <p class="section-title">
+      <span class="icon" style="background:#eef0fe">&#128200;</span>
+      Equity &amp; Stock Options
+    </p>
+    <table class="stock-table">
+      <thead>
+        <tr>
+          <th>Grant</th>
+          <th>Type</th>
+          <th>Grant Date</th>
+          <th>Total Units</th>
+          <th>Vested</th>
+          <th>Strike Price</th>
+          <th>Market Value</th>
+          <th>Unrealised Gain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RSU-2022-A</td>
+          <td>RSU</td>
+          <td>Mar 2022</td>
+          <td>800</td>
+          <td>800 (100%)</td>
+          <td>—</td>
+          <td class="val">R$ 32,000</td>
+          <td class="val" style="color:#4caf82">+R$ 32,000</td>
+        </tr>
+        <tr>
+          <td>RSU-2023-B</td>
+          <td>RSU</td>
+          <td>Mar 2023</td>
+          <td>1,000</td>
+          <td>750 (75%)</td>
+          <td>—</td>
+          <td class="val">R$ 30,000</td>
+          <td class="val" style="color:#4caf82">+R$ 30,000</td>
+        </tr>
+        <tr>
+          <td>OPT-2024-C</td>
+          <td>Stock Option</td>
+          <td>Jan 2024</td>
+          <td>2,000</td>
+          <td>500 (25%)</td>
+          <td>R$ 25.00</td>
+          <td class="val">R$ 20,000</td>
+          <td class="val" style="color:#4caf82">+R$ 7,500</td>
+        </tr>
+        <tr>
+          <td>RSU-2025-D</td>
+          <td>RSU</td>
+          <td>Mar 2025</td>
+          <td>1,200</td>
+          <td>0 (0%)</td>
+          <td>—</td>
+          <td class="val">R$ 48,000</td>
+          <td class="val" style="color:#6b7a8d">Unvested</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Vesting timeline -->
+    <div style="margin-top:22px">
+      <p style="font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.7px; margin-bottom:12px">Vesting Schedule</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot done"></div>
+          <div class="tl-date">Mar 2022 – Mar 2023</div>
+          <div class="tl-label">RSU-2022-A — Fully vested</div>
+          <div class="tl-sub">800 units @ R$ 40.00 market</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done"></div>
+          <div class="tl-date">Mar 2023 – Mar 2026</div>
+          <div class="tl-label">RSU-2023-B — 75% vested (cliff at 100% Mar 2026)</div>
+          <div class="tl-sub">750 / 1,000 units vested</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-date">Jan 2024 – Jan 2028</div>
+          <div class="tl-label">OPT-2024-C — 25% vested, quarterly thereafter</div>
+          <div class="tl-sub">500 / 2,000 exercisable today</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot future"></div>
+          <div class="tl-date">Mar 2025 – Mar 2029</div>
+          <div class="tl-label">RSU-2025-D — 1-year cliff, then monthly</div>
+          <div class="tl-sub">First vest Mar 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="total-box" style="background:#eef0fe; color:#1a3c5e; margin-top:18px">
+      <span class="t-label">Total Equity Value (Vested)</span>
+      <span class="t-value" style="font-size:1.2rem; color:#5b7fe8">R$ 99,500</span>
+    </div>
+  </div>
+
+  <!-- ── Row 2: Benefits ────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:20px">
+    <p class="section-title">
+      <span class="icon" style="background:#e8f9f0">&#10024;</span>
+      Benefits &amp; Perks
+    </p>
+    <div class="benefit-grid">
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F3E5;</div>
+        <div>
+          <div class="b-label">Health Insurance</div>
+          <div class="b-detail">Premium plan — employee + 3 dependants</div>
+          <div class="b-value">R$ 14,400 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F9B7;</div>
+        <div>
+          <div class="b-label">Dental Insurance</div>
+          <div class="b-detail">Full coverage, no co-pay</div>
+          <div class="b-value">R$ 2,400 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F441;&#xFE0F;</div>
+        <div>
+          <div class="b-label">Vision Plan</div>
+          <div class="b-detail">Glasses &amp; exams included</div>
+          <div class="b-value">R$ 1,200 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F37D;&#xFE0F;</div>
+        <div>
+          <div class="b-label">Meal Voucher (VR/VA)</div>
+          <div class="b-detail">R$ 1,100 / month on card</div>
+          <div class="b-value">R$ 13,200 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F68C;</div>
+        <div>
+          <div class="b-label">Transport Voucher (VT)</div>
+          <div class="b-detail">Full commute coverage</div>
+          <div class="b-value">R$ 3,600 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F4B0;</div>
+        <div>
+          <div class="b-label">FGTS</div>
+          <div class="b-detail">8% of monthly salary (employer)</div>
+          <div class="b-value">R$ 28,800 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F4BB;</div>
+        <div>
+          <div class="b-label">Home Office Stipend</div>
+          <div class="b-detail">Equipment + internet allowance</div>
+          <div class="b-value">R$ 4,800 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F4DA;</div>
+        <div>
+          <div class="b-label">Learning &amp; Development</div>
+          <div class="b-detail">Courses, conferences, certifications</div>
+          <div class="b-value">R$ 6,000 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F3CB;&#xFE0F;</div>
+        <div>
+          <div class="b-label">Gym / Wellbeing</div>
+          <div class="b-detail">Gympass Gold membership</div>
+          <div class="b-value">R$ 2,400 / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F476;</div>
+        <div>
+          <div class="b-label">Parental Leave</div>
+          <div class="b-detail">6 months full-pay (all genders)</div>
+          <div class="b-value">Priceless</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x2708;&#xFE0F;</div>
+        <div>
+          <div class="b-label">Paid Time Off</div>
+          <div class="b-detail">30 days vacation + 12 flex days</div>
+          <div class="b-value">42 days / year</div>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="b-icon">&#x1F4F1;</div>
+        <div>
+          <div class="b-label">Mobile Allowance</div>
+          <div class="b-detail">Company mobile plan</div>
+          <div class="b-value">R$ 1,440 / year</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="total-box accent" style="margin-top:18px">
+      <span class="t-label">Benefits &amp; Perks Annual Value</span>
+      <span class="t-value" style="font-size:1.2rem">R$ 63,240</span>
+    </div>
+  </div>
+
+  <!-- ── Summary table ──────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:20px">
+    <p class="section-title">
+      <span class="icon" style="background:#e8f0fe">&#128203;</span>
+      Reward Summary
+    </p>
+    <div class="line-item">
+      <div>
+        <div class="label">Base Compensation</div>
+        <div class="sub">Salary + 13th + vacation</div>
+      </div>
+      <span class="amount">R$ 360,000</span>
+    </div>
+    <div class="line-item">
+      <div>
+        <div class="label">Variable Pay &amp; Bonus</div>
+        <div class="sub">Performance + spot + PLR</div>
+      </div>
+      <span class="amount">R$ 58,000</span>
+    </div>
+    <div class="line-item">
+      <div>
+        <div class="label">Equity (Vested Value)</div>
+        <div class="sub">RSUs + Stock Options realised value</div>
+      </div>
+      <span class="amount">R$ 99,500</span>
+    </div>
+    <div class="line-item">
+      <div>
+        <div class="label">Benefits &amp; Perks</div>
+        <div class="sub">Insurance, vouchers, FGTS, allowances</div>
+      </div>
+      <span class="amount">R$ 63,240</span>
+    </div>
+    <div class="total-box primary" style="margin-top:16px">
+      <span class="t-label">&#127942;&nbsp; Total Annual Reward Value</span>
+      <span class="t-value">R$ 580,740</span>
+    </div>
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <div class="footer">
+    This statement is provided for informational purposes only and does not constitute a legal or contractual commitment.
+    Values are estimates and may vary. Equity values are based on current market price as of the statement date.
+    <br>For questions, contact <strong>people@mycompany.com</strong> &nbsp;|&nbsp; &copy; 2026 MyCompany. All rights reserved.
+  </div>
+
+</div>
+</body>
+</html>
