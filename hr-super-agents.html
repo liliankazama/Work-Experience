@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1600">
+<title>Super Agentes de RH — Arquitetura Agêntica</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #05080f;
+    --surface:  #0a0f1e;
+    --card:     #0d1428;
+    --border:   #17243a;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --subtle:   #1e2d42;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.45;
+    min-width: 1440px;
+  }
+
+  .page { padding: 22px 28px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── HEADER ── */
+  header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    border-bottom: 1px solid var(--border); padding-bottom: 16px;
+  }
+  .title-block h1 {
+    font-size: 22px; font-weight: 700; letter-spacing: -.5px; color: #fff;
+  }
+  .title-block h1 span {
+    background: linear-gradient(90deg, #818cf8, #38bdf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .title-block p { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .kpi-strip {
+    display: flex; gap: 24px;
+  }
+  .kpi {
+    text-align: center; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 18px;
+  }
+  .kpi-value { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+  .kpi-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-top: 2px; }
+
+  /* ── JOURNEY COVERAGE MAP ── */
+  .coverage-map {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .coverage-title {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .coverage-grid {
+    display: grid; grid-template-rows: repeat(8, 1fr);
+    gap: 5px;
+  }
+  .coverage-row {
+    display: grid; grid-template-columns: 180px repeat(12, 1fr);
+    gap: 4px; align-items: center;
+  }
+  .coverage-agent-name {
+    font-size: 10px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cov-block {
+    height: 18px; border-radius: 4px; background: var(--subtle);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700; color: transparent;
+  }
+  .cov-block.active {
+    color: rgba(255,255,255,.85);
+  }
+  .stage-labels {
+    display: grid; grid-template-columns: 180px repeat(12, 1fr);
+    gap: 4px; margin-bottom: 6px;
+  }
+  .stage-label-cell {
+    font-size: 8px; color: var(--muted); text-align: center;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    padding: 0 2px;
+  }
+
+  /* ── AGENTS GRID ── */
+  .agents-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  /* ── AGENT CARD ── */
+  .agent-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; display: flex; flex-direction: column;
+    overflow: hidden; position: relative;
+    border-top: 3px solid var(--accent);
+  }
+  .agent-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 80px;
+    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 8%, transparent), transparent);
+    pointer-events: none;
+  }
+
+  .agent-header {
+    padding: 14px 14px 10px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .agent-icon {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    background: color-mix(in srgb, var(--accent) 20%, #0a1020);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    margin-top: 1px;
+  }
+  .agent-meta { flex: 1; min-width: 0; }
+  .agent-number {
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 2px;
+    opacity: .8;
+  }
+  .agent-name {
+    font-size: 13px; font-weight: 700; color: #f1f5f9; line-height: 1.2;
+  }
+  .agent-scope {
+    font-size: 9px; color: var(--muted); margin-top: 3px;
+  }
+
+  /* journey mini-strip */
+  .mini-journey {
+    padding: 0 14px 10px;
+    display: flex; gap: 3px; align-items: center;
+  }
+  .mj-block {
+    flex: 1; height: 6px; border-radius: 2px;
+    background: var(--subtle);
+  }
+  .mj-block.on {
+    background: var(--accent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+
+  /* agent body */
+  .agent-body {
+    flex: 1; padding: 0 14px 10px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .section-label {
+    font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+  }
+
+  .process-list {
+    list-style: none; display: flex; flex-direction: column; gap: 3px;
+  }
+  .process-list li {
+    display: flex; align-items: flex-start; gap: 5px;
+    font-size: 10.5px; color: #94a3b8; line-height: 1.35;
+  }
+  .process-list li::before {
+    content: '▸'; color: var(--accent); font-size: 9px;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .process-list li.highlight { color: #cbd5e1; }
+
+  .systems-row {
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .sys-tag {
+    background: var(--subtle); border: 1px solid var(--border);
+    border-radius: 4px; padding: 2px 7px;
+    font-size: 9px; color: #94a3b8; font-weight: 500;
+  }
+
+  /* footer strips */
+  .human-strip {
+    background: #1a0f06; border-top: 1px solid #3d2008;
+    padding: 8px 14px; display: flex; gap: 6px; align-items: flex-start;
+  }
+  .human-icon { font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+  .human-label {
+    font-size: 8px; font-weight: 700; letter-spacing: .8px;
+    text-transform: uppercase; color: #f59e0b; margin-bottom: 2px;
+  }
+  .human-desc { font-size: 10px; color: #d97706; line-height: 1.35; }
+
+  .admin-strip {
+    background: color-mix(in srgb, var(--accent) 8%, #050810);
+    border-top: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    padding: 7px 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .admin-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+  .admin-text { font-size: 10px; font-weight: 600; color: #94a3b8; }
+  .admin-text strong { color: color-mix(in srgb, var(--accent) 80%, #e2e8f0); }
+
+  /* ── TEAM SECTION ── */
+  .team-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 20px;
+  }
+  .team-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .team-header h2 { font-size: 14px; font-weight: 700; color: #f1f5f9; }
+  .team-header p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .team-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
+  }
+  .team-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 9px; padding: 12px;
+  }
+  .team-role {
+    font-size: 11px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px;
+  }
+  .team-agents {
+    display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px;
+  }
+  .team-agent-tag {
+    font-size: 8px; padding: 2px 6px; border-radius: 4px;
+    font-weight: 600; background: var(--subtle); color: #94a3b8;
+  }
+  .team-human-tasks {
+    font-size: 9.5px; color: var(--muted); line-height: 1.5;
+  }
+  .team-human-tasks li {
+    list-style: none; display: flex; gap: 4px; align-items: flex-start;
+  }
+  .team-human-tasks li::before { content: '→'; color: #f59e0b; }
+
+  /* ── UTIL ── */
+  .divider {
+    height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  @media print {
+    body { background: white; color: #111; min-width: 0; }
+    .agent-card, .coverage-map, .team-section, .team-card {
+      background: #f8fafc; border-color: #e2e8f0;
+    }
+    .agent-card::before { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <header>
+    <div class="title-block">
+      <h1>Os <span>8 Super Agentes</span> de RH</h1>
+      <p>Processos de ponta a ponta rodando com autonomia — e os pontos exatos onde o humano entra</p>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi">
+        <div class="kpi-value" style="color:#818cf8">8</div>
+        <div class="kpi-label">Super Agentes</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value" style="color:#34d399">6</div>
+        <div class="kpi-label">Humanos Admins</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value" style="color:#38bdf8">12</div>
+        <div class="kpi-label">Estágios Cobertos</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value" style="color:#f59e0b">80+</div>
+        <div class="kpi-label">Processos Automatizados</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ COVERAGE MAP ══ -->
+  <div class="coverage-map">
+    <div class="coverage-title">Cobertura da Jornada por Super Agente</div>
+    <div class="stage-labels">
+      <div class="stage-label-cell"></div>
+      <div class="stage-label-cell">1. Planej.</div>
+      <div class="stage-label-cell">2. Employer Brand</div>
+      <div class="stage-label-cell">3. Recrut.</div>
+      <div class="stage-label-cell">4. Pré-board.</div>
+      <div class="stage-label-cell">5. Onboard.</div>
+      <div class="stage-label-cell">6. L&amp;D</div>
+      <div class="stage-label-cell">7. Performance</div>
+      <div class="stage-label-cell">8. Remun.</div>
+      <div class="stage-label-cell">9. Ops RH</div>
+      <div class="stage-label-cell">10. Carreira</div>
+      <div class="stage-label-cell">11. Engaj.</div>
+      <div class="stage-label-cell">12. Desl.</div>
+    </div>
+    <div class="coverage-grid">
+      <!-- Agent 1 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#3b82f6">① Inteligência de Talento</div>
+        <div class="cov-block active" style="background:#3b82f6">■</div>
+        <div class="cov-block active" style="background:#3b82f6">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 2 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#8b5cf6">② Recrutamento</div>
+        <div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#8b5cf6">■</div>
+        <div class="cov-block active" style="background:#8b5cf6; opacity:.4">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 3 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#10b981">③ Integração (Onboarding)</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#10b981; opacity:.6">■</div>
+        <div class="cov-block active" style="background:#10b981">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 4 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#06b6d4">④ Desenvolvimento &amp; Carreira</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#06b6d4">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#06b6d4">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 5 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#f59e0b">⑤ Performance</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#f59e0b">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 6 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#ec4899">⑥ Remuneração Total</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#ec4899">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 7 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#6366f1">⑦ Operações de RH</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#6366f1">■</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+      </div>
+      <!-- Agent 8 -->
+      <div class="coverage-row">
+        <div class="coverage-agent-name" style="color:#14b8a6">⑧ Engajamento &amp; Saída</div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div><div class="cov-block"></div>
+        <div class="cov-block active" style="background:#14b8a6">■</div>
+        <div class="cov-block active" style="background:#14b8a6">■</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ AGENTS GRID ══ -->
+  <div class="agents-grid">
+
+    <!-- ─── AGENT 1 ─── -->
+    <div class="agent-card" style="--accent: #3b82f6">
+      <div class="agent-header">
+        <div class="agent-icon">🎯</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 01</div>
+          <div class="agent-name">Inteligência de Talento</div>
+          <div class="agent-scope">Workforce Planning + Employer Brand</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block on"></div><div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Modelagem preditiva de headcount e cenários</li>
+            <li class="highlight">Análise contínua de skills gap vs. estratégia</li>
+            <li>Predição de turnover com 90–120 dias de antecedência</li>
+            <li>Monitoramento de reputação (Glassdoor, LinkedIn, Reddit, LLMs)</li>
+            <li class="highlight">Career site personalizado em tempo real por perfil</li>
+            <li>EVP testing automatizado por segmento de talento</li>
+            <li>Nurturing automático de pipelines de talento</li>
+            <li>Atualização contínua de planejamento de sucessão</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">Workday / SAP</span>
+            <span class="sys-tag">Visier</span>
+            <span class="sys-tag">Eightfold AI</span>
+            <span class="sys-tag">LinkedIn</span>
+            <span class="sys-tag">Glassdoor API</span>
+            <span class="sys-tag">Phenom TXM</span>
+            <span class="sys-tag">Radford / Mercer</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">Estratégia de onde investir em pessoas vs. automação. Aprovação de budget. Decisão de estrutura organizacional.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — Head de Talent Intelligence / People Analytics</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 2 ─── -->
+    <div class="agent-card" style="--accent: #8b5cf6">
+      <div class="agent-header">
+        <div class="agent-icon">🔍</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 02</div>
+          <div class="agent-name">Recrutamento</div>
+          <div class="agent-scope">Do job req ao contrato assinado</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div><div class="mj-block on" style="opacity:.4"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Job description com análise de bias (Textio)</li>
+            <li class="highlight">Sourcing autônomo em LinkedIn, GitHub, portfólios</li>
+            <li class="highlight">Triagem, scoring e ranking de candidatos</li>
+            <li>Assessments adaptativos e verificação de referências</li>
+            <li class="highlight">Entrevista inicial estruturada por agente</li>
+            <li>Notetaker e síntese de entrevistas técnicas</li>
+            <li>Toda comunicação com candidatos (zero silêncio)</li>
+            <li class="highlight">Oferta com benchmarking e equidade embutidos</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">Greenhouse / Lever</span>
+            <span class="sys-tag">HireVue</span>
+            <span class="sys-tag">Eightfold AI</span>
+            <span class="sys-tag">LinkedIn Recruiter</span>
+            <span class="sys-tag">Pymetrics / Harver</span>
+            <span class="sys-tag">Metaview</span>
+            <span class="sys-tag">Calendário</span>
+            <span class="sys-tag">HRIS</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">Entrevista de cultura e fit. Decisão final de contratação. Negociação de ofertas complexas. Auditoria de viés do modelo.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — TA Lead / Head de Recrutamento</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 3 ─── -->
+    <div class="agent-card" style="--accent: #10b981">
+      <div class="agent-header">
+        <div class="agent-icon">🚀</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 03</div>
+          <div class="agent-name">Integração</div>
+          <div class="agent-scope">Do aceite à produtividade plena (90 dias)</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on" style="opacity:.5"></div><div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Coleta e validação de documentos (OCR automático)</li>
+            <li class="highlight">Provisionamento de TI, acessos e equipamentos</li>
+            <li class="highlight">Agente de acolhimento D-30 até Day 1</li>
+            <li>Trilha de aprendizado personalizada por cargo e nível</li>
+            <li class="highlight">Agente 24/7 para dúvidas, processos e políticas</li>
+            <li>Compliance e treinamentos obrigatórios automáticos</li>
+            <li class="highlight">Check-ins 30/60/90 dias com análise de sentimento</li>
+            <li>Buddy matching inteligente + alertas para gestor</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">HRIS</span>
+            <span class="sys-tag">ServiceNow</span>
+            <span class="sys-tag">Enboarder</span>
+            <span class="sys-tag">Leena AI</span>
+            <span class="sys-tag">LMS (Degreed)</span>
+            <span class="sys-tag">Slack / Teams</span>
+            <span class="sys-tag">Calendário</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">1:1s do gestor (agente prompta, humano conduz). Conexão com o time. Casos de integração difícil que exigem julgamento humano.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — HR Ops (compartilhado com Agente 8)</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 4 ─── -->
+    <div class="agent-card" style="--accent: #06b6d4">
+      <div class="agent-header">
+        <div class="agent-icon">📈</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 04</div>
+          <div class="agent-name">Desenvolvimento &amp; Carreira</div>
+          <div class="agent-scope">L&amp;D + Mobilidade Interna contínua</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Feed de aprendizado personalizado (estilo Netflix)</li>
+            <li>Criação de conteúdo interno a partir de docs e SMEs</li>
+            <li class="highlight">AI Coaching on-demand disponível a todos</li>
+            <li>Mentoring matching por perfil + disponibilidade</li>
+            <li class="highlight">Agente de carreira pessoal — mapeamento e gaps</li>
+            <li class="highlight">Talent marketplace: vagas, gigs, projetos, mentorias</li>
+            <li>Skill tracking contínuo vs. mercado e estratégia</li>
+            <li>Identificação de HiPos com dados objetivos</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">Degreed / 360Learning</span>
+            <span class="sys-tag">BetterUp / CoachHub</span>
+            <span class="sys-tag">Gloat / Fuel50</span>
+            <span class="sys-tag">Eightfold AI</span>
+            <span class="sys-tag">HRIS</span>
+            <span class="sys-tag">Cornerstone</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">Conversas de aspiração e sponsorship. Programas de liderança executiva. Mobilidade que envolve negociação entre áreas.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — Head de Talent Development / L&amp;D</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 5 ─── -->
+    <div class="agent-card" style="--accent: #f59e0b">
+      <div class="agent-header">
+        <div class="agent-icon">⚡</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 05</div>
+          <div class="agent-name">Performance</div>
+          <div class="agent-scope">Ciclo contínuo — OKRs ao ciclo anual</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Tracking de OKRs integrado às ferramentas de trabalho</li>
+            <li class="highlight">Análise de padrões de feedback + detecção de bias</li>
+            <li class="highlight">Rascunho de avaliação a partir de evidências reais</li>
+            <li>Prompts para gestores: "45 dias sem dar feedback para X"</li>
+            <li class="highlight">Dados objetivos preparados para calibração</li>
+            <li>Detecção de viés estatístico entre grupos na calibração</li>
+            <li>Reconhecimento proativo de contribuições não visíveis</li>
+            <li class="highlight">Estrutura e monitoramento de PIP</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">Lattice / Leapsome</span>
+            <span class="sys-tag">15Five</span>
+            <span class="sys-tag">Betterworks</span>
+            <span class="sys-tag">Workday Illuminate</span>
+            <span class="sys-tag">Jira / Linear</span>
+            <span class="sys-tag">Slack / Teams</span>
+            <span class="sys-tag">HRIS</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">Todas as conversas de feedback difícil. Decisão de promoção. Abertura e condução de PIP. Calibração final de ratings.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — HRBP Sênior / Head de Performance</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 6 ─── -->
+    <div class="agent-card" style="--accent: #ec4899">
+      <div class="agent-header">
+        <div class="agent-icon">💎</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 06</div>
+          <div class="agent-name">Remuneração Total</div>
+          <div class="agent-scope">Total Rewards — do benchmark ao payroll</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Benchmarking salarial contínuo em tempo real</li>
+            <li class="highlight">Análise de equidade salarial automática (gênero, raça)</li>
+            <li class="highlight">Total Rewards dashboard em tempo real por colaborador</li>
+            <li>Simulador de carreira: "se eu for promovido a nível X..."</li>
+            <li class="highlight">Recomendação personalizada de benefícios por perfil</li>
+            <li>Enrollment guiado por agente conversacional</li>
+            <li class="highlight">Folha de pagamento + eSocial + compliance automáticos</li>
+            <li>Modelagem do ciclo de mérito com dados de equidade</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">Beqom / Compa</span>
+            <span class="sys-tag">Aon Radford API</span>
+            <span class="sys-tag">HRIS / Payroll</span>
+            <span class="sys-tag">SAP Payroll Agent</span>
+            <span class="sys-tag">Benefits platforms</span>
+            <span class="sys-tag">Workday Comp</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">Remuneração executiva. Remediação de equidade (quem recebe o ajuste). Exceções. Comunicação de mudanças de salário.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — Compensation &amp; Benefits Specialist</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 7 ─── -->
+    <div class="agent-card" style="--accent: #6366f1">
+      <div class="agent-header">
+        <div class="agent-icon">⚙️</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 07</div>
+          <div class="agent-name">Operações de RH</div>
+          <div class="agent-scope">HR Helpdesk + Compliance + Licenças</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">HR Helpdesk 24/7 — 80–94% de contenção autônoma</li>
+            <li class="highlight">Geração automática de documentos (cartas, declarações)</li>
+            <li class="highlight">Gestão de férias, licenças e banco de horas</li>
+            <li>Políticas navegáveis via conversa (não PDF)</li>
+            <li class="highlight">eSocial, CAGED, RAIS — geração e envio automático</li>
+            <li>Monitoramento de mudanças regulatórias (CLT, INSS)</li>
+            <li>Roteamento inteligente de tickets com contexto</li>
+            <li>Alertas de conformidade trabalhista proativos</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">IBM WatsonX / Leena AI</span>
+            <span class="sys-tag">ServiceNow</span>
+            <span class="sys-tag">HRIS / Payroll</span>
+            <span class="sys-tag">eSocial</span>
+            <span class="sys-tag">Gov.br APIs</span>
+            <span class="sys-tag">DocuSign</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">Investigações de assédio e discriminação. Audiências disciplinares. Relações sindicais. Qualquer caso ER que exija julgamento e empatia.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1–2 pessoas</strong> — HR Ops Specialist (escalações + ER)</div>
+      </div>
+    </div>
+
+    <!-- ─── AGENT 8 ─── -->
+    <div class="agent-card" style="--accent: #14b8a6">
+      <div class="agent-header">
+        <div class="agent-icon">💚</div>
+        <div class="agent-meta">
+          <div class="agent-number">Super Agente 08</div>
+          <div class="agent-name">Engajamento &amp; Saída</div>
+          <div class="agent-scope">Escuta contínua + Offboarding + Alumni</div>
+        </div>
+      </div>
+      <div class="mini-journey">
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block"></div><div class="mj-block"></div><div class="mj-block"></div>
+        <div class="mj-block on"></div><div class="mj-block on"></div>
+      </div>
+      <div class="agent-body">
+        <div>
+          <div class="section-label">Executa de ponta a ponta</div>
+          <ul class="process-list">
+            <li class="highlight">Escuta contínua: pulse surveys + NLP em tempo real</li>
+            <li class="highlight">Predição de desengajamento 60–90 dias antes</li>
+            <li>Alertas e recomendações de ação para gestores</li>
+            <li>Detecção de sobrecarga por padrões de trabalho</li>
+            <li class="highlight">Offboarding operacional completo (acessos, TRCT, docs)</li>
+            <li class="highlight">Transferência de conhecimento estruturada</li>
+            <li class="highlight">Entrevista de saída por agente (mais honesta que RH)</li>
+            <li>Alumni network + boomerang hire intelligence</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">Sistemas que integra</div>
+          <div class="systems-row">
+            <span class="sys-tag">Glint / Peakon</span>
+            <span class="sys-tag">Culture Amp</span>
+            <span class="sys-tag">Qualtrics XM</span>
+            <span class="sys-tag">Leena AI / Atomicwork</span>
+            <span class="sys-tag">HRIS</span>
+            <span class="sys-tag">Alumni CRM</span>
+          </div>
+        </div>
+      </div>
+      <div class="human-strip">
+        <div class="human-icon">🔒</div>
+        <div>
+          <div class="human-label">Decisão Humana</div>
+          <div class="human-desc">A conversa de desligamento — sempre, sem exceção. Intervenções de cultura e pertencimento. Casos de saúde mental que requerem apoio especializado.</div>
+        </div>
+      </div>
+      <div class="admin-strip">
+        <div class="admin-dot"></div>
+        <div class="admin-text"><strong>Admin: 1 pessoa</strong> — EX Lead / HR Ops (compartilhado com Agente 3)</div>
+      </div>
+    </div>
+
+  </div><!-- /agents-grid -->
+
+  <!-- ══ TEAM SECTION ══ -->
+  <div class="team-section">
+    <div class="team-header">
+      <div>
+        <h2>A Equipe de 6 — O Que Muda no RH</h2>
+        <p>Com 8 Super Agentes rodando, o RH humano para de operar e começa a orquestrar. Cada pessoa administra agentes, intervém nos pontos que exigem julgamento humano e cuida do que IA não pode fazer: cultura, confiança e conversas difíceis.</p>
+      </div>
+    </div>
+    <div class="team-grid">
+
+      <div class="team-card">
+        <div class="team-role">🧠 Talent Intelligence Lead</div>
+        <div class="team-agents">
+          <span class="team-agent-tag" style="color:#3b82f6; border: 1px solid #3b82f633; background:#1e3a8a22">Agente 01</span>
+        </div>
+        <ul class="team-human-tasks">
+          <li>Estratégia de força de trabalho</li>
+          <li>Aprovação de headcount e budget</li>
+          <li>Decisão de estrutura organizacional</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">🎯 TA Lead</div>
+        <div class="team-agents">
+          <span class="team-agent-tag" style="color:#8b5cf6; border: 1px solid #8b5cf633; background:#4c1d9522">Agente 02</span>
+        </div>
+        <ul class="team-human-tasks">
+          <li>Entrevistas de cultura e fit</li>
+          <li>Decisão final de contratação</li>
+          <li>Auditoria de bias do modelo</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">⚙️ HR Ops Specialist</div>
+        <div class="team-agents">
+          <span class="team-agent-tag" style="color:#10b981; border: 1px solid #10b98133; background:#06231822">Agente 03</span>
+          <span class="team-agent-tag" style="color:#6366f1; border: 1px solid #6366f133; background:#1e1b4b22">Agente 07</span>
+          <span class="team-agent-tag" style="color:#14b8a6; border: 1px solid #14b8a633; background:#04292422">Agente 08</span>
+        </div>
+        <ul class="team-human-tasks">
+          <li>Escalações e casos de ER complexos</li>
+          <li>Investigações disciplinares</li>
+          <li>Conversa de desligamento</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">📈 Talent Dev Lead</div>
+        <div class="team-agents">
+          <span class="team-agent-tag" style="color:#06b6d4; border: 1px solid #06b6d433; background:#0c4a6e22">Agente 04</span>
+          <span class="team-agent-tag" style="color:#f59e0b; border: 1px solid #f59e0b33; background:#2c1a0722">Agente 05</span>
+        </div>
+        <ul class="team-human-tasks">
+          <li>Conversas de aspiração e sponsorship</li>
+          <li>Feedback difícil e decisão de promoção</li>
+          <li>Programas de liderança executiva</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">💎 Total Rewards Analyst</div>
+        <div class="team-agents">
+          <span class="team-agent-tag" style="color:#ec4899; border: 1px solid #ec489933; background:#50072522">Agente 06</span>
+        </div>
+        <ul class="team-human-tasks">
+          <li>Remuneração executiva e equity</li>
+          <li>Remediação de gaps de equidade</li>
+          <li>Comunicação de mudanças salariais</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">💚 EX &amp; Culture Lead</div>
+        <div class="team-agents">
+          <span class="team-agent-tag" style="color:#14b8a6; border: 1px solid #14b8a633; background:#04292422">Agente 08</span>
+        </div>
+        <ul class="team-human-tasks">
+          <li>Iniciativas de cultura e pertencimento</li>
+          <li>DE&amp;I — allyship e inclusão</li>
+          <li>Wellbeing e saúde mental (triagem → suporte)</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
