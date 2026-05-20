@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1600">
+<title>Jornada do Colaborador — RH Nativo de IA</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:         #06091a;
+    --card:       #0c1228;
+    --card-hover: #101830;
+    --border:     #1a2540;
+    --text:       #e2e8f0;
+    --muted:      #8899b8;
+
+    --ai:         #5b4bdb;
+    --ai-bg:      #1e1852;
+    --ai-text:    #c4b5fd;
+
+    --human:      #b45309;
+    --human-bg:   #2c1a07;
+    --human-text: #fde68a;
+
+    --hybrid:     #047857;
+    --hybrid-bg:  #062318;
+    --hybrid-text:#6ee7b7;
+
+    --phase1:     #3b82f6;
+    --phase2:     #8b5cf6;
+    --phase3:     #06b6d4;
+
+    --foundation: #0a1a30;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.4;
+    min-width: 1400px;
+  }
+
+  .page {
+    padding: 20px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+  }
+
+  .title-block h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .title-block h1 span {
+    background: linear-gradient(90deg, #6366f1, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .title-block p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-item.ai   .legend-dot { background: var(--ai); }
+  .legend-item.hybrid .legend-dot { background: var(--hybrid); }
+  .legend-item.human .legend-dot { background: var(--human); }
+  .legend-item.ai    { color: var(--ai-text); }
+  .legend-item.hybrid{ color: var(--hybrid-text); }
+  .legend-item.human { color: var(--human-text); }
+
+  /* ── PHASE SECTION ── */
+  .phase {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    border-radius: 12px;
+    overflow: visible;
+  }
+
+  .phase-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    flex-shrink: 0;
+    border-radius: 10px 0 0 10px;
+    padding: 8px 6px;
+    text-align: center;
+    gap: 6px;
+  }
+  .phase-1 .phase-label { background: linear-gradient(180deg, #1e3a8a22, #1e3a8a44); border-left: 3px solid var(--phase1); }
+  .phase-2 .phase-label { background: linear-gradient(180deg, #4c1d9522, #4c1d9544); border-left: 3px solid var(--phase2); }
+  .phase-3 .phase-label { background: linear-gradient(180deg, #0c4a6e22, #0c4a6e44); border-left: 3px solid var(--phase3); }
+
+  .phase-num {
+    font-size: 9px;
+    font-weight: 700;
+    opacity: 0.5;
+    letter-spacing: 1px;
+  }
+  .phase-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    line-height: 1.3;
+  }
+  .phase-1 .phase-title { color: #93c5fd; }
+  .phase-2 .phase-title { color: #c4b5fd; }
+  .phase-3 .phase-title { color: #67e8f9; }
+
+  /* ── STAGES ROW ── */
+  .stages-row {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  /* ── ARROW ── */
+  .arrow-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 14px;
+    opacity: 0.5;
+  }
+
+  /* ── STAGE CARD ── */
+  .stage {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .phase-1 .stage { border-top: 2px solid #1d4ed844; }
+  .phase-2 .stage { border-top: 2px solid #6d28d944; }
+  .phase-3 .stage { border-top: 2px solid #0e749044; }
+
+  .stage-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .stage-num {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .phase-1 .stage-num { background: #1d4ed8; color: #bfdbfe; }
+  .phase-2 .stage-num { background: #6d28d9; color: #ddd6fe; }
+  .phase-3 .stage-num { background: #0e7490; color: #cffafe; }
+
+  .stage-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #f1f5f9;
+    line-height: 1.3;
+  }
+
+  /* ── PROCESS LIST ── */
+  .processes {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .process-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    line-height: 1.35;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    text-transform: uppercase;
+  }
+  .tag.ai     { background: var(--ai-bg);     color: var(--ai-text);     border: 1px solid #3730a366; }
+  .tag.hybrid { background: var(--hybrid-bg); color: var(--hybrid-text); border: 1px solid #05603a66; }
+  .tag.human  { background: var(--human-bg);  color: var(--human-text);  border: 1px solid #92400e66; }
+
+  .process-name {
+    color: #cbd5e1;
+    font-size: 10.5px;
+  }
+  .process-item.divider {
+    border-top: 1px solid var(--border);
+    margin-top: 2px;
+    padding-top: 4px;
+  }
+
+  /* ── SECTION DIVIDER (wrap between rows) ── */
+  .phase-connector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0 0 62px;
+    opacity: 0.35;
+  }
+  .phase-connector::before,
+  .phase-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--muted), transparent);
+  }
+  .phase-connector span {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── AI FOUNDATION BAR ── */
+  .foundation {
+    background: var(--foundation);
+    border: 1px solid #1a3050;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 4px;
+  }
+  .foundation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .foundation-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .foundation-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #93c5fd;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .foundation-subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .foundation-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .foundation-item {
+    background: #0c1e35;
+    border: 1px solid #1e3a58;
+    border-radius: 7px;
+    padding: 8px 10px;
+  }
+  .foundation-item-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: #7dd3fc;
+    margin-bottom: 3px;
+  }
+  .foundation-item-desc {
+    font-size: 9.5px;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; color: #111; min-width: 0; font-size: 8px; }
+    .page { padding: 6mm; }
+    .stage { background: #f8fafc; border-color: #e2e8f0; }
+    :root {
+      --bg: white; --card: #f8fafc; --card-hover: #f1f5f9;
+      --border: #e2e8f0; --text: #111; --muted: #64748b;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header>
+    <div class="title-block">
+      <h1>Jornada do Colaborador &mdash; <span>RH Nativo de IA</span></h1>
+      <p>Do Sourcing ao Desligamento &mdash; Todos os estágios, subsistemas e pontos de entrada da IA no workflow de RH</p>
+    </div>
+    <div class="legend">
+      <div class="legend-item ai">
+        <div class="legend-dot"></div> IA Autônoma
+      </div>
+      <div class="legend-item hybrid">
+        <div class="legend-dot"></div> IA + Humano
+      </div>
+      <div class="legend-item human">
+        <div class="legend-dot"></div> Humano
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       FASE 1 — ATRAIR & CONTRATAR
+  ══════════════════════════════════════════ -->
+  <div class="phase phase-1">
+    <div class="phase-label">
+      <span class="phase-num">01</span>
+      <span class="phase-title">Atrair &amp; Contratar</span>
+    </div>
+    <div class="stages-row">
+
+      <!-- 1. PLANEJAMENTO -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">1</span>
+          <span class="stage-name">Planejamento de Força de Trabalho</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Modelagem preditiva de headcount</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Análise de lacunas de skills</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Predição de turnover (90–120 dias)</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Planejamento de sucessão</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Design organizacional (ONA)</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Decisão estratégica de budget</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 2. EMPLOYER BRANDING -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">2</span>
+          <span class="stage-name">Employer Branding &amp; Atração</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Monitoramento de reputação externa</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Career site personalizado em tempo real</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">EVP testing por segmento de talento</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Pipeline &amp; nurturing de talentos</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Monitoramento de como a empresa aparece em LLMs</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Autenticidade da marca e cultura</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 3. RECRUTAMENTO -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">3</span>
+          <span class="stage-name">Recrutamento &amp; Seleção</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Abertura de req. e job description anti-bias</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Sourcing autônomo (LinkedIn, GitHub, rede)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Triagem, scoring e comunicação com candidatos</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Assessments adaptativos &amp; verificação de referências</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Entrevista inicial estruturada (agente)</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Entrevistas técnicas (humano + notetaker IA)</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Geração de oferta com equidade embutida</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Entrevista de cultura &amp; decisão final</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 4. PRÉ-BOARDING -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">4</span>
+          <span class="stage-name">Pré-boarding</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Coleta e validação de documentos (OCR)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Provisionamento de TI e acessos</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Agente de acolhimento (D-30 até Day 1)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Background check automatizado</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Preparação do time e agenda do Day 1</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Mensagem pessoal do gestor direto</span></li>
+        </ul>
+      </div>
+
+    </div><!-- /stages-row -->
+  </div><!-- /phase-1 -->
+
+  <!-- ══════════════════════════════════════════
+       FASE 2 — DESENVOLVER
+  ══════════════════════════════════════════ -->
+  <div class="phase phase-2">
+    <div class="phase-label">
+      <span class="phase-num">02</span>
+      <span class="phase-title">Integrar &amp; Desenvolver</span>
+    </div>
+    <div class="stages-row">
+
+      <!-- 5. ONBOARDING -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">5</span>
+          <span class="stage-name">Onboarding</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Trilha de aprendizado personalizada por cargo</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Agente pessoal 24/7 (dúvidas, processos, acesso)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Check-ins automáticos com análise de sentimento</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Compliance e treinamentos obrigatórios</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Plano 30/60/90 dias + buddy matching</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Conexão humana com o time</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">1:1 com gestor — alinhamento de expectativas</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 6. L&D -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">6</span>
+          <span class="stage-name">Aprendizado &amp; Desenvolvimento</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Feed de aprendizado personalizado (estilo Netflix)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Criação de conteúdo interno a partir de docs e SMEs</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">AI Coaching on-demand (BetterUp / CoachHub)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Mentoring matching inteligente</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Skill tracking e recomendações de evolução</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Design de trilhas de liderança</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Coaching executivo e programas de alta liderança</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 7. PERFORMANCE -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">7</span>
+          <span class="stage-name">Gestão de Desempenho</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Tracking de OKRs em tempo real</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Feedback contínuo com análise de padrões e bias</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Rascunho de avaliação a partir de evidências</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Reconhecimento proativo de contribuições</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Calibração com dados objetivos (detecção de viés)</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Estrutura e monitoramento de PIP</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Feedback difícil, PIP e decisão de promoção</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 8. REMUNERAÇÃO -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">8</span>
+          <span class="stage-name">Remuneração &amp; Benefícios</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Benchmarking salarial contínuo em tempo real</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Análise de equidade salarial automática</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Total Rewards dashboard em tempo real</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Enrollment de benefícios guiado por agente</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Folha de pagamento e cálculos trabalhistas</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Ciclo de mérito com recomendação por dados</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Exceções, remuneração executiva, negociação</span></li>
+        </ul>
+      </div>
+
+    </div><!-- /stages-row -->
+  </div><!-- /phase-2 -->
+
+  <!-- ══════════════════════════════════════════
+       FASE 3 — RETER & EVOLUIR
+  ══════════════════════════════════════════ -->
+  <div class="phase phase-3">
+    <div class="phase-label">
+      <span class="phase-num">03</span>
+      <span class="phase-title">Reter &amp; Evoluir</span>
+    </div>
+    <div class="stages-row">
+
+      <!-- 9. OPS RH -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">9</span>
+          <span class="stage-name">Operações de RH</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">HR Helpdesk 24/7 — 80-94% contenção</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Gestão de licenças e ausências</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Compliance trabalhista e eSocial</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Políticas navegáveis via conversa</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Geração de cartas e documentos automáticos</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Detecção de sinais de conflito em dados</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Investigações ER, audiências e relações sindicais</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 10. CARREIRA -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">10</span>
+          <span class="stage-name">Carreira &amp; Mobilidade Interna</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Agente de carreira pessoal (disponível p/ todos)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Talent marketplace — vagas, projetos, gigs, mentoria</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Mapeamento de trilhas e gaps para cargo-alvo</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Identificação de HiPos com dados objetivos</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Pipeline de liderança e prontidão de sucessores</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Conversa de aspiração e sponsorship</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Gestão da política de mobilidade entre áreas</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 11. ENGAJAMENTO -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">11</span>
+          <span class="stage-name">Engajamento &amp; Cultura</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Escuta contínua (pulse surveys + NLP)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Predição de desengajamento (60–90 dias antes)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Alertas e recomendações de ação para gestores</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Detecção de sobrecarga por padrões de trabalho</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Análise de equidade na experiência (DE&amp;I)</span></li>
+          <li class="process-item"><span class="tag hybrid">H+IA</span><span class="process-name">Bem-estar e triagem para suporte de saúde mental</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Cultura, pertencimento e liderança como exemplo</span></li>
+        </ul>
+      </div>
+
+      <div class="arrow-col">›</div>
+
+      <!-- 12. DESLIGAMENTO -->
+      <div class="stage">
+        <div class="stage-header">
+          <span class="stage-num">12</span>
+          <span class="stage-name">Desligamento</span>
+        </div>
+        <ul class="processes">
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Conversa de desligamento — sempre humano</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Offboarding operacional (acessos, TRCT, docs)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Transferência de conhecimento estruturada</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Entrevista de saída (agente — mais honesta que RH)</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Análise de padrões de saída e causas sistêmicas</span></li>
+          <li class="process-item"><span class="tag ai">IA</span><span class="process-name">Alumni network &amp; boomerang hire intelligence</span></li>
+          <li class="process-item"><span class="tag human">H</span><span class="process-name">Comunicação ao time e relacionamento de longo prazo</span></li>
+        </ul>
+      </div>
+
+    </div><!-- /stages-row -->
+  </div><!-- /phase-3 -->
+
+  <!-- ══════════════════════════════════════════
+       FUNDAÇÃO — AI INFRASTRUCTURE LAYER
+  ══════════════════════════════════════════ -->
+  <div class="foundation">
+    <div class="foundation-header">
+      <div class="foundation-icon">⚡</div>
+      <div>
+        <div class="foundation-title">Camada de Infraestrutura IA — Habilitadores de Toda a Jornada</div>
+        <div class="foundation-subtitle">Ativa em todos os 12 estágios como base tecnológica e de dados</div>
+      </div>
+    </div>
+    <div class="foundation-grid">
+      <div class="foundation-item">
+        <div class="foundation-item-title">HRIS Unificado</div>
+        <div class="foundation-item-desc">Fonte única de verdade. Workday, SAP SuccessFactors ou Oracle HCM — todos migrando para arquitetura agêntica em 2025–26.</div>
+      </div>
+      <div class="foundation-item">
+        <div class="foundation-item-title">People Analytics</div>
+        <div class="foundation-item-desc">Data lake integrado com HRIS e sistemas de negócio. Dashboards preditivos, não históricos. Visier, One Model.</div>
+      </div>
+      <div class="foundation-item">
+        <div class="foundation-item-title">Agentes Autônomos</div>
+        <div class="foundation-item-desc">Executam tasks multi-step sem intervenção humana. Leena AI, IBM WatsonX Orchestrate, Workday Illuminate, SAP Joule.</div>
+      </div>
+      <div class="foundation-item">
+        <div class="foundation-item-title">Ontologia de Skills</div>
+        <div class="foundation-item-desc">Grafo dinâmico de competências atualizado em tempo real com sinais internos e de mercado. Eightfold AI, Degreed, Gloat.</div>
+      </div>
+      <div class="foundation-item">
+        <div class="foundation-item-title">Talent Intelligence</div>
+        <div class="foundation-item-desc">IA treinada em bilhões de perfis de carreira para matching e planejamento interno e externo. Eightfold AI (1,6 bi de perfis).</div>
+      </div>
+      <div class="foundation-item">
+        <div class="foundation-item-title">Compliance LGPD</div>
+        <div class="foundation-item-desc">Privacidade como arquitetura. Consentimento explícito, direito de revisão humana em decisões automatizadas, DPIA obrigatório.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
