@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lilian Kazama | Value Through People Decisions</title>
+    <style>
+        :root {
+            --primary: #ea1d2c;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --bg: #f8fafc;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            width: 100%;
+            height: 180px;
+            position: absolute;
+            top: 0;
+            z-index: -1;
+        }
+        .card {
+            background: var(--white);
+            width: 90%;
+            max-width: 440px;
+            margin-top: 100px;
+            border-radius: 32px;
+            padding: 0 24px 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .profile-wrapper {
+            margin-top: -60px;
+            margin-bottom: 20px;
+        }
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 30px;
+            object-fit: cover;
+            border: 6px solid var(--white);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background: #eee;
+        }
+        h1 {
+            font-size: 26px;
+            margin: 0;
+            font-weight: 800;
+            color: var(--dark);
+        }
+        .headline {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 8px 0 16px;
+        }
+        .role {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--gray);
+            line-height: 1.5;
+            margin-bottom: 24px;
+            padding: 0 20px;
+        }
+        .bio {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #475569;
+            margin-bottom: 32px;
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        .btn-outline {
+            background-color: var(--white);
+            color: var(--dark);
+            border: 2px solid #e2e8f0;
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bg"></div>
+    <div class="card">
+        <div class="profile-wrapper">
+            <img src="https://share.zapia.com/h53r962apqq8jimu6bcpke" alt="Lilian Kazama" class="profile-img">
+        </div>
+
+        <h1>Lilian Kazama</h1>
+        <div class="headline">Value Through People Decisions</div>
+        <div class="role">Total Rewards and People Operations Director</div>
+
+        <p class="bio">
+            Traduzindo complexidade em decisões pragmáticas que alinham cultura, performance e estratégia de negócio para gerar valor sustentável.
+        </p>
+
+        <div class="links">
+            <a href="https://site.zapia.com/66omgayk" class="btn btn-primary" target="_blank">Agendar Reunião</a>
+            <a href="https://www.linkedin.com/in/liliankazama" class="btn btn-outline" target="_blank">LinkedIn Profissional</a>
+            <a href="https://wa.me/5511986826606" class="btn btn-whatsapp" target="_blank">Falar no WhatsApp</a>
+        </div>
+
+        <div class="footer">
+            © 2026 • Lilian Kazama
+        </div>
+    </div>
+</body>
+</html>
