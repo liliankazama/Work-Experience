@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vida Boa – Victor & Leo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #1a6ab1;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #scene {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Sun ── */
+    @keyframes rotate-rays {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes pulse-sun {
+      0%,100% { r: 52; }
+      50%      { r: 56; }
+    }
+    .sun-rays {
+      transform-origin: 830px 105px;
+      animation: rotate-rays 18s linear infinite;
+    }
+    .sun-glow {
+      animation: pulse-sun 3s ease-in-out infinite;
+    }
+
+    /* ── Clouds ── */
+    @keyframes drift1 {
+      0%   { transform: translateX(-250px); }
+      100% { transform: translateX(1250px); }
+    }
+    @keyframes drift2 {
+      0%   { transform: translateX(-350px); }
+      100% { transform: translateX(1350px); }
+    }
+    .cloud-a { animation: drift1 40s linear infinite; }
+    .cloud-b { animation: drift2 55s linear infinite 20s; }
+
+    /* ── Birds ── */
+    @keyframes fly {
+      0%   { transform: translate(-120px,  0px); }
+      30%  { transform: translate(300px,  -25px); }
+      60%  { transform: translate(650px,   5px); }
+      100% { transform: translate(1120px, -10px); }
+    }
+    .birds { animation: fly 28s linear infinite 6s; }
+
+    /* ── Frog ── */
+    @keyframes hop {
+      0%,45%,100% { transform: translateY(0)   scaleY(1)   scaleX(1); }
+      20%          { transform: translateY(-28px) scaleY(0.85) scaleX(1.1); }
+    }
+    .frog { animation: hop 2.8s ease-in-out infinite; transform-origin: 295px 510px; }
+
+    /* ── Water ripple ── */
+    @keyframes ripple {
+      0%   { transform: scale(0.6); opacity: 0.7; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+    .rpl { animation: ripple 2.4s ease-out infinite; transform-origin: 360px 528px; }
+    .rpl2 { animation: ripple 2.4s ease-out infinite 1.2s; transform-origin: 360px 528px; }
+
+    /* ── Flowers ── */
+    @keyframes sway {
+      0%,100% { transform: rotate(-6deg); }
+      50%      { transform: rotate(6deg); }
+    }
+    .fl { animation: sway 2.2s ease-in-out infinite; }
+
+    /* ── Smoke ── */
+    @keyframes smoke {
+      0%   { transform: translateY(0)    scale(0.8); opacity: 0.5; }
+      100% { transform: translateY(-70px) scale(1.8); opacity: 0; }
+    }
+    .smk { animation: smoke 3.5s ease-out infinite; }
+
+    /* ── Stars (twinkling at top) ── */
+    @keyframes twinkle {
+      0%,100% { opacity: 0.2; }
+      50%      { opacity: 0.9; }
+    }
+    .star { animation: twinkle 2s ease-in-out infinite; }
+
+    /* ── Butterfly ── */
+    @keyframes flutter {
+      0%,100% { transform: scaleX(1); }
+      50%      { transform: scaleX(0.3); }
+    }
+    @keyframes butterfly-path {
+      0%   { transform: translate(430px, 430px) rotate(0deg); }
+      25%  { transform: translate(480px, 405px) rotate(10deg); }
+      50%  { transform: translate(510px, 420px) rotate(-5deg); }
+      75%  { transform: translate(465px, 440px) rotate(8deg); }
+      100% { transform: translate(430px, 430px) rotate(0deg); }
+    }
+    .butterfly-body { animation: butterfly-path 6s ease-in-out infinite; }
+    .butterfly-wings { animation: flutter 0.3s ease-in-out infinite; }
+
+    /* ── Rainbow ── */
+    @keyframes rainbow-show {
+      0%,60%  { opacity: 0; }
+      70%,90% { opacity: 0.55; }
+      100%    { opacity: 0; }
+    }
+    .rainbow { animation: rainbow-show 14s ease-in-out infinite 4s; }
+
+    /* ──────────────────────────────────────
+       LYRICS
+    ────────────────────────────────────── */
+    #lyrics-wrap {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 48%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 56px;
+      pointer-events: none;
+    }
+
+    #lyric-line {
+      font-family: 'Kaushan Script', cursive;
+      font-size: clamp(26px, 4.5vw, 52px);
+      color: #fff;
+      text-shadow:
+        2px  2px 0   rgba(0,0,0,0.45),
+        0    0   18px rgba(0,0,0,0.3),
+        0    0   40px rgba(255,200,50,0.25);
+      text-align: center;
+      padding: 0 24px;
+      max-width: 900px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      line-height: 1.35;
+    }
+    #lyric-line.on {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* chorus highlight */
+    #lyric-line.chorus {
+      color: #ffe57f;
+      text-shadow:
+        2px  2px 0   rgba(0,0,0,0.5),
+        0    0   22px rgba(255,160,0,0.6),
+        0    0   50px rgba(255,160,0,0.3);
+      font-size: clamp(30px, 5.5vw, 62px);
+    }
+
+    /* ── Progress ── */
+    #prog-bar {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 58%;
+      height: 5px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 3px;
+    }
+    #prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffe57f, #ff8f00);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.4s linear;
+    }
+
+    /* ── Title ── */
+    #title {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: white;
+      text-shadow: 1px 2px 6px rgba(0,0,0,0.4);
+      white-space: nowrap;
+    }
+    #title h1 {
+      font-family: 'Kaushan Script', cursive;
+      font-size: clamp(22px, 3.5vw, 44px);
+    }
+    #title p {
+      font-size: clamp(12px, 1.6vw, 18px);
+      opacity: 0.88;
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Play/Pause flash ── */
+    #pip {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%) scale(0);
+      font-size: 72px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    #pip.show {
+      opacity: 0.75;
+      transform: translate(-50%,-50%) scale(1);
+    }
+
+    /* ── Click hint ── */
+    #hint {
+      position: absolute;
+      bottom: 34px;
+      right: 24px;
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+<svg id="scene" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice"
+     xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0d5fa8"/>
+      <stop offset="100%" stop-color="#73c6e8"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5aad3f"/>
+      <stop offset="100%" stop-color="#2e6e1a"/>
+    </linearGradient>
+    <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fff9c4"/>
+      <stop offset="60%"  stop-color="#ffca28"/>
+      <stop offset="100%" stop-color="#ff8f00" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5bc8f5"/>
+      <stop offset="100%" stop-color="#0277bd"/>
+    </linearGradient>
+    <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#6ec94e"/>
+      <stop offset="100%" stop-color="#3e8c22"/>
+    </linearGradient>
+    <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#58b838"/>
+      <stop offset="100%" stop-color="#2d7216"/>
+    </linearGradient>
+    <filter id="blur3">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <filter id="blur1">
+      <feGaussianBlur stdDeviation="1"/>
+    </filter>
+  </defs>
+
+  <!-- ═══ SKY ═══ -->
+  <rect width="1000" height="600" fill="url(#sky)"/>
+
+  <!-- Stars (subtle, for depth) -->
+  <circle class="star" cx="80"  cy="50"  r="1.5" fill="white" style="animation-delay:0s"/>
+  <circle class="star" cx="200" cy="35"  r="1"   fill="white" style="animation-delay:0.8s"/>
+  <circle class="star" cx="350" cy="25"  r="1.5" fill="white" style="animation-delay:1.5s"/>
+  <circle class="star" cx="500" cy="40"  r="1"   fill="white" style="animation-delay:0.4s"/>
+  <circle class="star" cx="620" cy="20"  r="1.5" fill="white" style="animation-delay:1.1s"/>
+  <circle class="star" cx="750" cy="55"  r="1"   fill="white" style="animation-delay:2s"/>
+  <circle class="star" cx="950" cy="30"  r="1.5" fill="white" style="animation-delay:0.6s"/>
+
+  <!-- ═══ RAINBOW ═══ -->
+  <g class="rainbow">
+    <path d="M100 420 Q350 120 600 420" stroke="#f44336" stroke-width="7"  fill="none" opacity="0.6"/>
+    <path d="M115 420 Q350 140 585 420" stroke="#ff9800" stroke-width="7"  fill="none" opacity="0.6"/>
+    <path d="M130 420 Q350 158 570 420" stroke="#ffeb3b" stroke-width="7"  fill="none" opacity="0.6"/>
+    <path d="M145 420 Q350 174 555 420" stroke="#4caf50" stroke-width="7"  fill="none" opacity="0.6"/>
+    <path d="M160 420 Q350 190 540 420" stroke="#2196f3" stroke-width="7"  fill="none" opacity="0.6"/>
+    <path d="M175 420 Q350 206 525 420" stroke="#9c27b0" stroke-width="7"  fill="none" opacity="0.6"/>
+  </g>
+
+  <!-- ═══ SUN ═══ -->
+  <!-- Glow halo -->
+  <circle cx="830" cy="105" r="90" fill="url(#sun-grad)" opacity="0.45"/>
+
+  <!-- Rotating rays -->
+  <g class="sun-rays">
+    <line x1="830" y1="20"  x2="830" y2="2"   stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="830" y1="208" x2="830" y2="226"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="743" y1="105" x2="725" y2="105"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="917" y1="105" x2="935" y2="105"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="768" y1="45"  x2="755" y2="32"   stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="892" y1="45"  x2="905" y2="32"   stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="768" y1="165" x2="755" y2="178"  stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="892" y1="165" x2="905" y2="178"  stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Sun disc -->
+  <circle cx="830" cy="105" r="58" fill="#ffca28"/>
+  <circle cx="830" cy="105" r="46" fill="#fff176"/>
+  <!-- Sun face -->
+  <circle cx="814" cy="98"  r="6" fill="#ff8f00"/>
+  <circle cx="846" cy="98"  r="6" fill="#ff8f00"/>
+  <circle cx="815" cy="97"  r="3" fill="#5d4037"/>
+  <circle cx="847" cy="97"  r="3" fill="#5d4037"/>
+  <path d="M817 113 Q830 122 843 113" stroke="#e65100" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- ═══ CLOUDS ═══ -->
+  <g class="cloud-a">
+    <ellipse cx="160" cy="95"  rx="85"  ry="36" fill="white" opacity="0.93"/>
+    <ellipse cx="115" cy="107" rx="52"  ry="30" fill="white" opacity="0.93"/>
+    <ellipse cx="205" cy="107" rx="58"  ry="30" fill="white" opacity="0.93"/>
+    <ellipse cx="160" cy="112" rx="75"  ry="22" fill="white" opacity="0.93"/>
+  </g>
+  <g class="cloud-b">
+    <ellipse cx="420" cy="65"  rx="65"  ry="27" fill="white" opacity="0.82"/>
+    <ellipse cx="380" cy="75"  rx="42"  ry="23" fill="white" opacity="0.82"/>
+    <ellipse cx="460" cy="75"  rx="45"  ry="23" fill="white" opacity="0.82"/>
+  </g>
+
+  <!-- ═══ BACK HILLS (far, light) ═══ -->
+  <ellipse cx="150" cy="415" rx="310" ry="140" fill="#7ad157" opacity="0.45"/>
+  <ellipse cx="710" cy="425" rx="380" ry="145" fill="#62c040" opacity="0.38"/>
+
+  <!-- ═══ GROUND ═══ -->
+  <rect x="0" y="390" width="1000" height="210" fill="url(#ground)"/>
+
+  <!-- Mid hill left -->
+  <path d="M-20 500 Q120 340 310 440 Q400 480 500 470 L500 600 L-20 600 Z"
+        fill="url(#hill1)"/>
+  <!-- Mid hill right -->
+  <path d="M500 470 Q650 435 800 450 Q920 460 1020 440 L1020 600 L500 600 Z"
+        fill="url(#hill2)"/>
+
+  <!-- ═══ DIRT PATH ═══ -->
+  <path d="M1020 540 Q820 510 660 525 Q560 532 490 555 Q420 575 390 600 L600 600 L1020 600 Z"
+        fill="#c49a3c" opacity="0.48"/>
+  <!-- Path edge shading -->
+  <path d="M1020 540 Q820 510 660 525 Q560 532 490 555"
+        stroke="#a07828" stroke-width="2" fill="none" opacity="0.4"/>
+
+  <!-- ═══ LAGOA / LAKE ═══ -->
+  <ellipse cx="360" cy="528" rx="148" ry="50" fill="url(#lake)" opacity="0.88"/>
+  <!-- Shimmer -->
+  <ellipse cx="330" cy="516" rx="55"  ry="10" fill="white" opacity="0.14"/>
+  <ellipse cx="375" cy="536" rx="30"  ry="6"  fill="white" opacity="0.10"/>
+  <!-- Reflection of trees -->
+  <ellipse cx="360" cy="548" rx="80"  ry="18" fill="#2e7d32" opacity="0.18"/>
+  <!-- Water ripples -->
+  <ellipse class="rpl"  cx="360" cy="528" rx="80" ry="26"
+           fill="none" stroke="#81d4fa" stroke-width="2.5" opacity="0.55"/>
+  <ellipse class="rpl2" cx="360" cy="528" rx="50" ry="16"
+           fill="none" stroke="#81d4fa" stroke-width="2"   opacity="0.55"/>
+
+  <!-- ═══ CASINHA / HOUSE ═══ -->
+  <!-- Shadow -->
+  <ellipse cx="645" cy="524" rx="75" ry="12" fill="rgba(0,0,0,0.18)"/>
+  <!-- Body -->
+  <rect x="588" y="430" width="125" height="95" fill="#f5deb3" rx="4"/>
+  <!-- Roof -->
+  <polygon points="572,432 728,432 650,365" fill="#c62828"/>
+  <polygon points="572,432 728,432 650,365" fill="none" stroke="#b71c1c" stroke-width="2"/>
+  <!-- Roof ridge detail -->
+  <line x1="650" y1="365" x2="650" y2="432" stroke="#b71c1c" stroke-width="1.5" opacity="0.4"/>
+  <!-- Chimney -->
+  <rect x="662" y="368" width="20" height="35" fill="#a0522d"/>
+  <rect x="658" y="364" width="28" height="8"  fill="#795548" rx="2"/>
+  <!-- Smoke -->
+  <circle class="smk" cx="672" cy="358" r="9"  fill="#ccc" opacity="0.5" style="animation-delay:0s"/>
+  <circle class="smk" cx="669" cy="338" r="11" fill="#ccc" opacity="0.35" style="animation-delay:1.2s"/>
+  <circle class="smk" cx="675" cy="318" r="13" fill="#ccc" opacity="0.2"  style="animation-delay:2.4s"/>
+  <!-- Door -->
+  <rect x="626" y="477" width="32" height="48" fill="#6d4c41" rx="4"/>
+  <circle cx="655" cy="501" r="3.5" fill="#ffd54f"/>
+  <!-- Door arch -->
+  <path d="M626 477 Q642 462 658 477" fill="#5d4037"/>
+  <!-- Window L -->
+  <rect x="592" y="445" width="30" height="26" fill="#b3e5fc" rx="3"
+        stroke="#795548" stroke-width="2"/>
+  <line x1="607" y1="445" x2="607" y2="471" stroke="#795548" stroke-width="1.5"/>
+  <line x1="592" y1="458" x2="622" y2="458" stroke="#795548" stroke-width="1.5"/>
+  <!-- Window R -->
+  <rect x="678" y="445" width="30" height="26" fill="#b3e5fc" rx="3"
+        stroke="#795548" stroke-width="2"/>
+  <line x1="693" y1="445" x2="693" y2="471" stroke="#795548" stroke-width="1.5"/>
+  <line x1="678" y1="458" x2="708" y2="458" stroke="#795548" stroke-width="1.5"/>
+  <!-- Windowsill flowers -->
+  <circle cx="592" cy="443" r="4" fill="#ef5350"/>
+  <circle cx="598" cy="441" r="4" fill="#ff7043"/>
+  <circle cx="604" cy="443" r="4" fill="#ffa726"/>
+
+  <!-- ═══ TREES ═══ -->
+  <!-- Left tree (big) -->
+  <rect x="118" y="435" width="20" height="90" fill="#6d4c41" rx="4"/>
+  <ellipse cx="128" cy="415" rx="55" ry="38" fill="#2e7d32"/>
+  <ellipse cx="128" cy="395" rx="44" ry="33" fill="#388e3c"/>
+  <ellipse cx="128" cy="377" rx="30" ry="24" fill="#43a047"/>
+  <ellipse cx="128" cy="363" rx="18" ry="15" fill="#66bb6a"/>
+  <!-- fruit -->
+  <circle cx="110" cy="400" r="5"  fill="#e53935"/>
+  <circle cx="145" cy="395" r="5"  fill="#e53935"/>
+  <circle cx="125" cy="408" r="4"  fill="#e53935"/>
+
+  <!-- Right tree -->
+  <rect x="800" y="445" width="16" height="75" fill="#6d4c41" rx="3"/>
+  <ellipse cx="808" cy="425" rx="45" ry="33" fill="#1b5e20"/>
+  <ellipse cx="808" cy="407" rx="36" ry="28" fill="#2e7d32"/>
+  <ellipse cx="808" cy="392" rx="25" ry="20" fill="#388e3c"/>
+
+  <!-- Small shrubs -->
+  <ellipse cx="500" cy="475" rx="28" ry="18" fill="#4caf50"/>
+  <ellipse cx="510" cy="468" rx="18" ry="14" fill="#66bb6a"/>
+  <ellipse cx="870" cy="480" rx="22" ry="14" fill="#388e3c"/>
+  <ellipse cx="878" cy="474" rx="14" ry="11" fill="#4caf50"/>
+
+  <!-- ═══ PALHEIRO / HAY ═══ -->
+  <rect x="735" y="490" width="50" height="32" fill="#f9a825" rx="4"/>
+  <polygon points="725,490 797,490 760,472" fill="#f57f17"/>
+  <line x1="748" y1="490" x2="748" y2="522" stroke="#e65100" stroke-width="1" opacity="0.4"/>
+  <line x1="760" y1="490" x2="760" y2="522" stroke="#e65100" stroke-width="1" opacity="0.4"/>
+  <line x1="772" y1="490" x2="772" y2="522" stroke="#e65100" stroke-width="1" opacity="0.4"/>
+
+  <!-- ═══ SAPO / FROG ═══ -->
+  <g class="frog">
+    <!-- Shadow -->
+    <ellipse cx="295" cy="512" rx="26" ry="7" fill="rgba(0,0,0,0.2)"/>
+    <!-- Hind legs -->
+    <path d="M278 504 Q262 512 255 524" stroke="#388e3c" stroke-width="7"
+          fill="none" stroke-linecap="round"/>
+    <path d="M312 504 Q328 512 335 524" stroke="#388e3c" stroke-width="7"
+          fill="none" stroke-linecap="round"/>
+    <!-- Feet -->
+    <ellipse cx="252" cy="526" rx="10" ry="5" fill="#388e3c"/>
+    <ellipse cx="338" cy="526" rx="10" ry="5" fill="#388e3c"/>
+    <!-- Body -->
+    <ellipse cx="295" cy="500" rx="25" ry="18" fill="#4caf50"/>
+    <!-- Belly -->
+    <ellipse cx="295" cy="504" rx="16" ry="12" fill="#a5d6a7" opacity="0.6"/>
+    <!-- Head -->
+    <ellipse cx="295" cy="483" rx="21" ry="16" fill="#66bb6a"/>
+    <!-- Eyes (bulgy) -->
+    <circle cx="283" cy="474" r="9"  fill="#c8e6c9"/>
+    <circle cx="307" cy="474" r="9"  fill="#c8e6c9"/>
+    <circle cx="284" cy="473" r="5"  fill="#1b5e20"/>
+    <circle cx="308" cy="473" r="5"  fill="#1b5e20"/>
+    <circle cx="286" cy="471" r="2"  fill="white"/>
+    <circle cx="310" cy="471" r="2"  fill="white"/>
+    <!-- Mouth (smile) -->
+    <path d="M284 487 Q295 495 306 487" stroke="#2e7d32" stroke-width="2.5"
+          fill="none" stroke-linecap="round"/>
+    <!-- Front arms -->
+    <path d="M274 498 Q262 503 258 510" stroke="#4caf50" stroke-width="6"
+          fill="none" stroke-linecap="round"/>
+    <path d="M316 498 Q328 503 332 510" stroke="#4caf50" stroke-width="6"
+          fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- ═══ BUTTERFLY ═══ -->
+  <g class="butterfly-body">
+    <g class="butterfly-wings">
+      <path d="M0,-12 Q-18,-28 -22,-8 Q-18,4 0,0 Z"  fill="#ff6f00" opacity="0.88"/>
+      <path d="M0,-12 Q 18,-28  22,-8 Q 18,4 0,0 Z"  fill="#ff6f00" opacity="0.88"/>
+      <path d="M0,0  Q-14, 14 -12,22 Q -6,18 0,10 Z" fill="#ffa000" opacity="0.88"/>
+      <path d="M0,0  Q 14, 14  12,22 Q  6,18 0,10 Z" fill="#ffa000" opacity="0.88"/>
+    </g>
+    <!-- Body -->
+    <ellipse cx="0" cy="4" rx="2.5" ry="14" fill="#4e342e"/>
+    <!-- Antennae -->
+    <line x1="0" y1="-12" x2="-8" y2="-25" stroke="#4e342e" stroke-width="1.5"/>
+    <line x1="0" y1="-12" x2=" 8" y2="-25" stroke="#4e342e" stroke-width="1.5"/>
+    <circle cx="-8"  cy="-25" r="2.5" fill="#4e342e"/>
+    <circle cx=" 8"  cy="-25" r="2.5" fill="#4e342e"/>
+  </g>
+
+  <!-- ═══ BIRDS ═══ -->
+  <g class="birds">
+    <path d="M0,0 Q8,-8 16,0"   stroke="#1a237e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M24,-8 Q32,-16 40,-8" stroke="#1a237e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M12,4  Q20,-4 28,4"   stroke="#1a237e" stroke-width="2"   fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- ═══ FLOWERS ═══ -->
+  <!-- Cluster left -->
+  <g class="fl" style="transform-origin:68px 522px; animation-delay:0s">
+    <line x1="68" y1="522" x2="68" y2="498" stroke="#4caf50" stroke-width="3.5"/>
+    <!-- Leaf -->
+    <path d="M68 510 Q58 503 56 508 Q60 514 68 510" fill="#66bb6a"/>
+    <circle cx="68" cy="492" r="9"  fill="#e53935"/>
+    <circle cx="60" cy="496" r="6"  fill="#ef9a9a"/>
+    <circle cx="76" cy="496" r="6"  fill="#ef9a9a"/>
+    <circle cx="68" cy="484" r="6"  fill="#ef9a9a"/>
+    <circle cx="68" cy="492" r="4"  fill="#ffd54f"/>
+  </g>
+  <g class="fl" style="transform-origin:92px 530px; animation-delay:0.6s">
+    <line x1="92" y1="530" x2="92" y2="506" stroke="#4caf50" stroke-width="3"/>
+    <circle cx="92" cy="500" r="8"  fill="#ffeb3b"/>
+    <circle cx="84" cy="504" r="5"  fill="#fff9c4"/>
+    <circle cx="100" cy="504" r="5" fill="#fff9c4"/>
+    <circle cx="92" cy="493" r="5"  fill="#fff9c4"/>
+    <circle cx="92" cy="500" r="3.5" fill="#ff8f00"/>
+  </g>
+  <g class="fl" style="transform-origin:55px 538px; animation-delay:1.3s">
+    <line x1="55" y1="538" x2="55" y2="520" stroke="#4caf50" stroke-width="3"/>
+    <circle cx="55" cy="514" r="7"  fill="#ab47bc"/>
+    <circle cx="48" cy="518" r="4.5" fill="#ce93d8"/>
+    <circle cx="62" cy="518" r="4.5" fill="#ce93d8"/>
+    <circle cx="55" cy="508" r="4.5" fill="#ce93d8"/>
+    <circle cx="55" cy="514" r="3"  fill="#ffd54f"/>
+  </g>
+  <!-- Cluster right -->
+  <g class="fl" style="transform-origin:930px 522px; animation-delay:0.3s">
+    <line x1="930" y1="522" x2="930" y2="500" stroke="#4caf50" stroke-width="3.5"/>
+    <circle cx="930" cy="494" r="9"  fill="#ff7043"/>
+    <circle cx="921" cy="498" r="6"  fill="#ffccbc"/>
+    <circle cx="939" cy="498" r="6"  fill="#ffccbc"/>
+    <circle cx="930" cy="486" r="6"  fill="#ffccbc"/>
+    <circle cx="930" cy="494" r="4"  fill="#ffd54f"/>
+  </g>
+  <g class="fl" style="transform-origin:955px 532px; animation-delay:1.0s">
+    <line x1="955" y1="532" x2="955" y2="512" stroke="#4caf50" stroke-width="3"/>
+    <circle cx="955" cy="506" r="8"  fill="#ec407a"/>
+    <circle cx="947" cy="510" r="5"  fill="#f48fb1"/>
+    <circle cx="963" cy="510" r="5"  fill="#f48fb1"/>
+    <circle cx="955" cy="499" r="5"  fill="#f48fb1"/>
+    <circle cx="955" cy="506" r="3.5" fill="#ffd54f"/>
+  </g>
+  <g class="fl" style="transform-origin:530px 480px; animation-delay:0.9s">
+    <line x1="530" y1="480" x2="530" y2="463" stroke="#4caf50" stroke-width="2.5"/>
+    <circle cx="530" cy="458" r="7"  fill="#42a5f5"/>
+    <circle cx="523" cy="462" r="4.5" fill="#bbdefb"/>
+    <circle cx="537" cy="462" r="4.5" fill="#bbdefb"/>
+    <circle cx="530" cy="452" r="4.5" fill="#bbdefb"/>
+    <circle cx="530" cy="458" r="3"  fill="#ffd54f"/>
+  </g>
+
+  <!-- Grass tufts -->
+  <g stroke="#2e7d32" stroke-width="2" stroke-linecap="round" fill="none">
+    <path d="M440 472 Q443 459 446 472"/>
+    <path d="M450 470 Q453 457 456 470"/>
+    <path d="M458 471 Q461 458 464 471"/>
+    <path d="M175 478 Q178 465 181 478"/>
+    <path d="M183 476 Q186 463 189 476"/>
+    <path d="M820 472 Q823 459 826 472"/>
+    <path d="M828 470 Q831 457 834 470"/>
+    <path d="M475 476 Q478 463 481 476"/>
+  </g>
+
+  <!-- Pé de laranja lima (orange tree near house) -->
+  <rect x="540" y="462" width="10" height="40" fill="#795548" rx="2"/>
+  <ellipse cx="545" cy="452" rx="25" ry="20" fill="#388e3c"/>
+  <ellipse cx="545" cy="442" rx="18" ry="15" fill="#43a047"/>
+  <!-- Laranjas -->
+  <circle cx="535" cy="452" r="6"  fill="#ff8f00"/>
+  <circle cx="555" cy="455" r="6"  fill="#ff8f00"/>
+  <circle cx="543" cy="460" r="5"  fill="#ffa726"/>
+  <!-- Leaves highlight -->
+  <circle cx="540" cy="440" r="4" fill="#66bb6a" opacity="0.5"/>
+
+  <!-- Dog / Cachorrinho -->
+  <g transform="translate(485,488)">
+    <!-- Body -->
+    <ellipse cx="0" cy="0" rx="20" ry="12" fill="#c8a26e"/>
+    <!-- Head -->
+    <circle cx="18" cy="-8" r="11" fill="#c8a26e"/>
+    <!-- Ear -->
+    <ellipse cx="13" cy="-16" rx="5" ry="7" fill="#a1785a" transform="rotate(-20,13,-16)"/>
+    <ellipse cx="23" cy="-17" rx="4" ry="6" fill="#a1785a" transform="rotate(10,23,-17)"/>
+    <!-- Eye -->
+    <circle cx="23" cy="-9" r="3"  fill="#4e342e"/>
+    <circle cx="24" cy="-10" r="1" fill="white"/>
+    <!-- Nose -->
+    <ellipse cx="30" cy="-6" rx="3.5" ry="2.5" fill="#5d4037"/>
+    <!-- Mouth -->
+    <path d="M30 -4 Q32 -1 30 0" stroke="#4e342e" stroke-width="1.5" fill="none"/>
+    <!-- Tail -->
+    <path d="M-18 -4 Q-30 -16 -24 -20" stroke="#a1785a" stroke-width="5"
+          fill="none" stroke-linecap="round"/>
+    <!-- Legs -->
+    <rect x="-10" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
+    <rect x="  2" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
+    <rect x=" 10" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
+    <rect x="-18" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
+  </g>
+
+</svg>
+
+<!-- ════ TITLE ════ -->
+<div id="title">
+  <h1>Vida Boa</h1>
+  <p>Victor &amp; Leo</p>
+</div>
+
+<!-- ════ LYRICS ════ -->
+<div id="lyrics-wrap">
+  <div id="lyric-line"></div>
+</div>
+
+<!-- ════ PROGRESS ════ -->
+<div id="prog-bar">
+  <div id="prog-fill"></div>
+</div>
+
+<!-- Play/Pause flash -->
+<div id="pip">▶</div>
+
+<div id="hint">clique para pausar / retomar</div>
+
+<script>
+  // ──────────────────────────────────────
+  // LETRA — ajuste os textos se necessário
+  // ──────────────────────────────────────
+  const lyrics = [
+    // intro
+    { text: "♪ ♪ ♪", dur: 2500, chorus: false },
+
+    // Verso 1
+    { text: "Moro num lugar", dur: 3000, chorus: false },
+    { text: "Numa casinha inocente do sertão", dur: 3800, chorus: false },
+    { text: "Com um pé de laranja lima", dur: 3200, chorus: false },
+    { text: "Um cachorrinho fiel de companhão", dur: 3800, chorus: false },
+    { text: "Minha vida é muito simples", dur: 3200, chorus: false },
+    { text: "Mas de graça eu não a troco não", dur: 3800, chorus: false },
+    { text: "Pois eu tenho o que é mais precioso", dur: 3200, chorus: false },
+    { text: "Que é saúde e um bom coração", dur: 3800, chorus: false },
+
+    // Refrão
+    { text: "♪", dur: 1800, chorus: false },
+    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
+    { text: "Que vida boa", dur: 2800, chorus: true },
+    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
+    { text: "Sou eu no caminho do meu sertão", dur: 4200, chorus: true },
+
+    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
+    { text: "Que vida boa", dur: 2800, chorus: true },
+    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
+    { text: "Sou eu no caminho do meu sertão", dur: 4200, chorus: true },
+
+    // Verso 2
+    { text: "♪", dur: 1800, chorus: false },
+    { text: "Tenho o sol da madrugada", dur: 3200, chorus: false },
+    { text: "Tenho o brilho da manhã", dur: 3200, chorus: false },
+    { text: "Tenho a chuva que molha a terra", dur: 3200, chorus: false },
+    { text: "E o arco-íris que vem lá", dur: 3500, chorus: false },
+    { text: "Os pássaros cantando na varanda", dur: 3200, chorus: false },
+    { text: "A borboleta que voa pelo ar", dur: 3500, chorus: false },
+
+    // Refrão final
+    { text: "♪", dur: 1800, chorus: false },
+    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
+    { text: "Que vida boa", dur: 2800, chorus: true },
+    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
+    { text: "Sou eu no caminho do meu sertão", dur: 4200, chorus: true },
+
+    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
+    { text: "Que vida boa", dur: 2800, chorus: true },
+    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
+    { text: "Sou eu no caminho do meu sertão", dur: 4800, chorus: true },
+
+    // Fim
+    { text: "🎵  Vida Boa  🎵", dur: 5000, chorus: true },
+  ];
+
+  const lineEl    = document.getElementById('lyric-line');
+  const progFill  = document.getElementById('prog-fill');
+  const pip       = document.getElementById('pip');
+
+  const totalDur  = lyrics.reduce((s, l) => s + l.dur, 0);
+  let idx         = 0;
+  let elapsed     = 0;
+  let playing     = true;
+  let tid         = null;
+
+  function show(i) {
+    if (i >= lyrics.length) {
+      elapsed = 0; idx = 0; show(0); return;
+    }
+    const item = lyrics[i];
+
+    lineEl.classList.remove('on', 'chorus');
+    lineEl.style.opacity = '0';
+
+    setTimeout(() => {
+      lineEl.textContent = item.text;
+      if (item.chorus) lineEl.classList.add('chorus');
+      lineEl.classList.add('on');
+
+      tid = setTimeout(() => {
+        elapsed += item.dur;
+        idx++;
+        updateProg();
+        show(idx);
+      }, item.dur);
+    }, 320);
+  }
+
+  function updateProg() {
+    const pct = Math.min((elapsed / totalDur) * 100, 100);
+    progFill.style.width = pct + '%';
+  }
+
+  function toggle() {
+    if (playing) {
+      clearTimeout(tid);
+      playing = false;
+      pip.textContent = '▶';
+    } else {
+      playing = true;
+      pip.textContent = '⏸';
+      show(idx);
+    }
+    pip.classList.add('show');
+    clearTimeout(pip._t);
+    pip._t = setTimeout(() => pip.classList.remove('show'), 900);
+  }
+
+  document.body.addEventListener('click', toggle);
+
+  // Start after a short intro pause
+  setTimeout(() => show(0), 1200);
+</script>
+
+</body>
+</html>
