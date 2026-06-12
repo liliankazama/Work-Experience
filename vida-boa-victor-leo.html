@@ -9,247 +9,275 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      width: 100vw;
-      height: 100vh;
+      width: 100vw; height: 100vh;
       overflow: hidden;
       background: #1a6ab1;
       font-family: 'Nunito', sans-serif;
-      cursor: pointer;
       user-select: none;
     }
 
-    #scene {
-      position: absolute;
-      width: 100%;
-      height: 100%;
+    #scene { position: absolute; width: 100%; height: 100%; }
+
+    /* ──── START SCREEN ──── */
+    #start-screen {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+    }
+    .start-card {
+      background: linear-gradient(145deg, #fffde7, #fff9c4);
+      border-radius: 24px;
+      padding: 48px 56px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      animation: card-in 0.6s ease;
+    }
+    @keyframes card-in {
+      from { transform: scale(0.7) translateY(30px); opacity: 0; }
+      to   { transform: scale(1)   translateY(0);    opacity: 1; }
+    }
+    .start-card .note { font-size: 56px; margin-bottom: 8px; }
+    .start-card h2 {
+      font-family: 'Kaushan Script', cursive;
+      font-size: 42px; color: #e65100;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.15);
+    }
+    .start-card p { font-size: 18px; color: #5d4037; margin-top: 4px; }
+    #start-btn {
+      margin-top: 28px;
+      background: linear-gradient(135deg, #ff8f00, #e65100);
+      color: white; border: none; border-radius: 50px;
+      padding: 14px 44px; font-size: 20px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.05em;
+      box-shadow: 0 6px 20px rgba(230,81,0,0.45);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    #start-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 8px 28px rgba(230,81,0,0.55);
     }
 
-    /* ── Sun ── */
+    /* ──── SUN ──── */
     @keyframes rotate-rays {
-      from { transform: rotate(0deg); }
+      from { transform: rotate(0deg);   }
       to   { transform: rotate(360deg); }
     }
     @keyframes pulse-sun {
-      0%,100% { r: 52; }
-      50%      { r: 56; }
+      0%,100% { opacity: 1;    }
+      50%      { opacity: 0.85; }
     }
     .sun-rays {
       transform-origin: 830px 105px;
       animation: rotate-rays 18s linear infinite;
     }
-    .sun-glow {
-      animation: pulse-sun 3s ease-in-out infinite;
-    }
+    .sun-core { animation: pulse-sun 2.5s ease-in-out infinite; }
 
-    /* ── Clouds ── */
+    /* ──── CLOUDS ──── */
     @keyframes drift1 {
-      0%   { transform: translateX(-250px); }
-      100% { transform: translateX(1250px); }
+      0%   { transform: translateX(-260px); }
+      100% { transform: translateX(1260px); }
     }
     @keyframes drift2 {
-      0%   { transform: translateX(-350px); }
-      100% { transform: translateX(1350px); }
+      0%   { transform: translateX(-340px); }
+      100% { transform: translateX(1340px); }
     }
-    .cloud-a { animation: drift1 40s linear infinite; }
-    .cloud-b { animation: drift2 55s linear infinite 20s; }
+    .cloud-a { animation: drift1 38s linear infinite; }
+    .cloud-b { animation: drift2 54s linear infinite 18s; }
 
-    /* ── Birds ── */
+    /* ──── BIRDS ──── */
     @keyframes fly {
-      0%   { transform: translate(-120px,  0px); }
-      30%  { transform: translate(300px,  -25px); }
-      60%  { transform: translate(650px,   5px); }
-      100% { transform: translate(1120px, -10px); }
+      0%   { transform: translate(-130px,  0);    }
+      30%  { transform: translate(300px,  -28px); }
+      65%  { transform: translate(660px,    4px); }
+      100% { transform: translate(1130px, -12px); }
     }
-    .birds { animation: fly 28s linear infinite 6s; }
+    .birds { animation: fly 26s linear infinite 5s; }
 
-    /* ── Frog ── */
+    /* ──── FROG ──── */
     @keyframes hop {
-      0%,45%,100% { transform: translateY(0)   scaleY(1)   scaleX(1); }
-      20%          { transform: translateY(-28px) scaleY(0.85) scaleX(1.1); }
+      0%,45%,100% { transform: translateY(0)    scaleY(1)    scaleX(1); }
+      20%          { transform: translateY(-30px) scaleY(0.82) scaleX(1.12); }
     }
     .frog { animation: hop 2.8s ease-in-out infinite; transform-origin: 295px 510px; }
 
-    /* ── Water ripple ── */
+    /* ──── WATER ──── */
     @keyframes ripple {
-      0%   { transform: scale(0.6); opacity: 0.7; }
-      100% { transform: scale(1.4); opacity: 0; }
+      0%   { transform: scale(0.5); opacity: 0.75; }
+      100% { transform: scale(1.5); opacity: 0;    }
     }
-    .rpl { animation: ripple 2.4s ease-out infinite; transform-origin: 360px 528px; }
-    .rpl2 { animation: ripple 2.4s ease-out infinite 1.2s; transform-origin: 360px 528px; }
+    .rpl  { animation: ripple 2.2s ease-out infinite;       transform-origin: 360px 528px; }
+    .rpl2 { animation: ripple 2.2s ease-out infinite 1.1s;  transform-origin: 360px 528px; }
 
-    /* ── Flowers ── */
+    /* ──── FLOWERS ──── */
     @keyframes sway {
-      0%,100% { transform: rotate(-6deg); }
-      50%      { transform: rotate(6deg); }
+      0%,100% { transform: rotate(-7deg); }
+      50%      { transform: rotate(7deg);  }
     }
-    .fl { animation: sway 2.2s ease-in-out infinite; }
+    .fl { animation: sway 2.4s ease-in-out infinite; }
 
-    /* ── Smoke ── */
+    /* ──── SMOKE ──── */
     @keyframes smoke {
-      0%   { transform: translateY(0)    scale(0.8); opacity: 0.5; }
-      100% { transform: translateY(-70px) scale(1.8); opacity: 0; }
+      0%   { transform: translateY(0)    scale(0.7); opacity: 0.55; }
+      100% { transform: translateY(-75px) scale(2);  opacity: 0;    }
     }
-    .smk { animation: smoke 3.5s ease-out infinite; }
+    .smk { animation: smoke 3.4s ease-out infinite; }
 
-    /* ── Stars (twinkling at top) ── */
+    /* ──── BUTTERFLY ──── */
+    @keyframes flutter {
+      0%,100% { transform: scaleX(1);   }
+      50%      { transform: scaleX(0.2); }
+    }
+    @keyframes flutter-path {
+      0%   { transform: translate(430px,430px) rotate(0deg);  }
+      25%  { transform: translate(485px,404px) rotate(12deg); }
+      50%  { transform: translate(515px,422px) rotate(-6deg); }
+      75%  { transform: translate(462px,444px) rotate(9deg);  }
+      100% { transform: translate(430px,430px) rotate(0deg);  }
+    }
+    .bf-body   { animation: flutter-path 6s ease-in-out infinite; }
+    .bf-wings  { animation: flutter 0.28s ease-in-out infinite; }
+
+    /* ──── RAINBOW ──── */
+    @keyframes rainbow-show {
+      0%,55%  { opacity: 0;    }
+      68%,88% { opacity: 0.52; }
+      100%    { opacity: 0;    }
+    }
+    .rainbow { animation: rainbow-show 16s ease-in-out infinite 3s; }
+
+    /* ──── DOG TAIL WAG ──── */
+    @keyframes wag {
+      0%,100% { transform: rotate(-25deg); }
+      50%      { transform: rotate(25deg);  }
+    }
+    .dog-tail { animation: wag 0.55s ease-in-out infinite; transform-origin: 467px 488px; }
+
+    /* ──── STARS ──── */
     @keyframes twinkle {
-      0%,100% { opacity: 0.2; }
-      50%      { opacity: 0.9; }
+      0%,100% { opacity: 0.15; }
+      50%      { opacity: 0.8;  }
     }
     .star { animation: twinkle 2s ease-in-out infinite; }
 
-    /* ── Butterfly ── */
-    @keyframes flutter {
-      0%,100% { transform: scaleX(1); }
-      50%      { transform: scaleX(0.3); }
-    }
-    @keyframes butterfly-path {
-      0%   { transform: translate(430px, 430px) rotate(0deg); }
-      25%  { transform: translate(480px, 405px) rotate(10deg); }
-      50%  { transform: translate(510px, 420px) rotate(-5deg); }
-      75%  { transform: translate(465px, 440px) rotate(8deg); }
-      100% { transform: translate(430px, 430px) rotate(0deg); }
-    }
-    .butterfly-body { animation: butterfly-path 6s ease-in-out infinite; }
-    .butterfly-wings { animation: flutter 0.3s ease-in-out infinite; }
-
-    /* ── Rainbow ── */
-    @keyframes rainbow-show {
-      0%,60%  { opacity: 0; }
-      70%,90% { opacity: 0.55; }
-      100%    { opacity: 0; }
-    }
-    .rainbow { animation: rainbow-show 14s ease-in-out infinite 4s; }
-
-    /* ──────────────────────────────────────
+    /* ════════════════════════
        LYRICS
-    ────────────────────────────────────── */
+    ════════════════════════ */
     #lyrics-wrap {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 48%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 56px;
+      position: absolute; bottom: 0; width: 100%; height: 48%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 58px;
       pointer-events: none;
     }
-
     #lyric-line {
       font-family: 'Kaushan Script', cursive;
-      font-size: clamp(26px, 4.5vw, 52px);
+      font-size: clamp(26px, 4.6vw, 54px);
       color: #fff;
       text-shadow:
         2px  2px 0   rgba(0,0,0,0.45),
-        0    0   18px rgba(0,0,0,0.3),
-        0    0   40px rgba(255,200,50,0.25);
+        0    0   20px rgba(0,0,0,0.28),
+        0    0   44px rgba(255,200,50,0.2);
       text-align: center;
-      padding: 0 24px;
-      max-width: 900px;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      padding: 0 28px; max-width: 920px;
+      opacity: 0; transform: translateY(14px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
       line-height: 1.35;
     }
-    #lyric-line.on {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* chorus highlight */
+    #lyric-line.on  { opacity: 1; transform: translateY(0); }
     #lyric-line.chorus {
       color: #ffe57f;
+      font-size: clamp(30px, 5.6vw, 64px);
       text-shadow:
         2px  2px 0   rgba(0,0,0,0.5),
-        0    0   22px rgba(255,160,0,0.6),
-        0    0   50px rgba(255,160,0,0.3);
-      font-size: clamp(30px, 5.5vw, 62px);
+        0    0   24px rgba(255,160,0,0.65),
+        0    0   55px rgba(255,160,0,0.28);
     }
 
-    /* ── Progress ── */
+    /* ──── PROGRESS ──── */
     #prog-bar {
-      position: absolute;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 58%;
-      height: 5px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 3px;
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      width: 56%; height: 5px;
+      background: rgba(255,255,255,0.22); border-radius: 3px;
     }
     #prog-fill {
       height: 100%;
       background: linear-gradient(90deg, #ffe57f, #ff8f00);
-      border-radius: 3px;
-      width: 0%;
+      border-radius: 3px; width: 0%;
       transition: width 0.4s linear;
     }
 
-    /* ── Title ── */
+    /* ──── TITLE ──── */
     #title {
-      position: absolute;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: white;
-      text-shadow: 1px 2px 6px rgba(0,0,0,0.4);
+      position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+      text-align: center; color: white;
+      text-shadow: 1px 2px 6px rgba(0,0,0,0.38);
       white-space: nowrap;
     }
     #title h1 {
       font-family: 'Kaushan Script', cursive;
-      font-size: clamp(22px, 3.5vw, 44px);
+      font-size: clamp(22px, 3.6vw, 46px);
     }
     #title p {
-      font-size: clamp(12px, 1.6vw, 18px);
-      opacity: 0.88;
-      margin-top: 2px;
-      letter-spacing: 0.05em;
+      font-size: clamp(12px, 1.7vw, 19px);
+      opacity: 0.88; margin-top: 2px; letter-spacing: 0.05em;
     }
 
-    /* ── Play/Pause flash ── */
+    /* ──── PLAY/PAUSE FLASH ──── */
     #pip {
-      position: absolute;
-      top: 50%;
-      left: 50%;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%,-50%) scale(0);
-      font-size: 72px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s, transform 0.25s;
+      font-size: 72px; opacity: 0; pointer-events: none;
+      transition: opacity 0.22s, transform 0.22s;
     }
-    #pip.show {
-      opacity: 0.75;
-      transform: translate(-50%,-50%) scale(1);
-    }
+    #pip.show { opacity: 0.75; transform: translate(-50%,-50%) scale(1); }
 
-    /* ── Click hint ── */
+    /* ──── HINT ──── */
     #hint {
-      position: absolute;
-      bottom: 34px;
-      right: 24px;
-      color: rgba(255,255,255,0.55);
-      font-size: 12px;
+      position: absolute; bottom: 34px; right: 20px;
+      color: rgba(255,255,255,0.48); font-size: 11px;
       letter-spacing: 0.04em;
     }
+
+    /* ──── VOLUME BADGE ──── */
+    #vol-badge {
+      position: absolute; top: 20px; right: 20px;
+      color: rgba(255,255,255,0.7); font-size: 20px; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    #vol-badge:hover { opacity: 0.5; }
   </style>
 </head>
 <body>
 
-<svg id="scene" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice"
+<!-- ═══════════════════════════════════════
+     START SCREEN
+════════════════════════════════════════ -->
+<div id="start-screen">
+  <div class="start-card">
+    <div class="note">🌿🎵🐸</div>
+    <h2>Vida Boa</h2>
+    <p>Victor &amp; Leo</p>
+    <button id="start-btn">▶ Começar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCENE SVG
+════════════════════════════════════════ -->
+<svg id="scene" viewBox="0 0 1000 600"
+     preserveAspectRatio="xMidYMid slice"
      xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#0d5fa8"/>
       <stop offset="100%" stop-color="#73c6e8"/>
     </linearGradient>
-    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#5aad3f"/>
       <stop offset="100%" stop-color="#2e6e1a"/>
     </linearGradient>
-    <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
+    <radialGradient id="sun-g" cx="50%" cy="50%" r="50%">
       <stop offset="0%"   stop-color="#fff9c4"/>
       <stop offset="60%"  stop-color="#ffca28"/>
       <stop offset="100%" stop-color="#ff8f00" stop-opacity="0"/>
@@ -258,249 +286,240 @@
       <stop offset="0%"   stop-color="#5bc8f5"/>
       <stop offset="100%" stop-color="#0277bd"/>
     </linearGradient>
-    <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="h1" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#6ec94e"/>
       <stop offset="100%" stop-color="#3e8c22"/>
     </linearGradient>
-    <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="h2" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#58b838"/>
       <stop offset="100%" stop-color="#2d7216"/>
     </linearGradient>
-    <filter id="blur3">
-      <feGaussianBlur stdDeviation="3"/>
-    </filter>
-    <filter id="blur1">
-      <feGaussianBlur stdDeviation="1"/>
-    </filter>
   </defs>
 
-  <!-- ═══ SKY ═══ -->
+  <!-- Sky -->
   <rect width="1000" height="600" fill="url(#sky)"/>
 
-  <!-- Stars (subtle, for depth) -->
-  <circle class="star" cx="80"  cy="50"  r="1.5" fill="white" style="animation-delay:0s"/>
-  <circle class="star" cx="200" cy="35"  r="1"   fill="white" style="animation-delay:0.8s"/>
-  <circle class="star" cx="350" cy="25"  r="1.5" fill="white" style="animation-delay:1.5s"/>
-  <circle class="star" cx="500" cy="40"  r="1"   fill="white" style="animation-delay:0.4s"/>
-  <circle class="star" cx="620" cy="20"  r="1.5" fill="white" style="animation-delay:1.1s"/>
-  <circle class="star" cx="750" cy="55"  r="1"   fill="white" style="animation-delay:2s"/>
-  <circle class="star" cx="950" cy="30"  r="1.5" fill="white" style="animation-delay:0.6s"/>
+  <!-- Stars -->
+  <circle class="star" cx="80"  cy="48"  r="1.5" fill="white" style="animation-delay:0s"/>
+  <circle class="star" cx="200" cy="33"  r="1"   fill="white" style="animation-delay:.8s"/>
+  <circle class="star" cx="355" cy="24"  r="1.5" fill="white" style="animation-delay:1.5s"/>
+  <circle class="star" cx="505" cy="38"  r="1"   fill="white" style="animation-delay:.4s"/>
+  <circle class="star" cx="620" cy="18"  r="1.5" fill="white" style="animation-delay:1.1s"/>
+  <circle class="star" cx="755" cy="52"  r="1"   fill="white" style="animation-delay:2s"/>
+  <circle class="star" cx="952" cy="28"  r="1.5" fill="white" style="animation-delay:.6s"/>
 
-  <!-- ═══ RAINBOW ═══ -->
+  <!-- Rainbow -->
   <g class="rainbow">
-    <path d="M100 420 Q350 120 600 420" stroke="#f44336" stroke-width="7"  fill="none" opacity="0.6"/>
-    <path d="M115 420 Q350 140 585 420" stroke="#ff9800" stroke-width="7"  fill="none" opacity="0.6"/>
-    <path d="M130 420 Q350 158 570 420" stroke="#ffeb3b" stroke-width="7"  fill="none" opacity="0.6"/>
-    <path d="M145 420 Q350 174 555 420" stroke="#4caf50" stroke-width="7"  fill="none" opacity="0.6"/>
-    <path d="M160 420 Q350 190 540 420" stroke="#2196f3" stroke-width="7"  fill="none" opacity="0.6"/>
-    <path d="M175 420 Q350 206 525 420" stroke="#9c27b0" stroke-width="7"  fill="none" opacity="0.6"/>
+    <path d="M100 420 Q350 120 600 420" stroke="#f44336" stroke-width="7" fill="none" opacity=".62"/>
+    <path d="M116 420 Q350 140 584 420" stroke="#ff9800" stroke-width="7" fill="none" opacity=".62"/>
+    <path d="M132 420 Q350 158 568 420" stroke="#ffeb3b" stroke-width="7" fill="none" opacity=".62"/>
+    <path d="M148 420 Q350 175 552 420" stroke="#4caf50" stroke-width="7" fill="none" opacity=".62"/>
+    <path d="M164 420 Q350 192 536 420" stroke="#2196f3" stroke-width="7" fill="none" opacity=".62"/>
+    <path d="M180 420 Q350 208 520 420" stroke="#9c27b0" stroke-width="7" fill="none" opacity=".62"/>
   </g>
 
-  <!-- ═══ SUN ═══ -->
-  <!-- Glow halo -->
-  <circle cx="830" cy="105" r="90" fill="url(#sun-grad)" opacity="0.45"/>
-
-  <!-- Rotating rays -->
+  <!-- Sun glow -->
+  <circle cx="830" cy="105" r="92" fill="url(#sun-g)" opacity=".42"/>
+  <!-- Sun rays -->
   <g class="sun-rays">
-    <line x1="830" y1="20"  x2="830" y2="2"   stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
-    <line x1="830" y1="208" x2="830" y2="226"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
-    <line x1="743" y1="105" x2="725" y2="105"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
-    <line x1="917" y1="105" x2="935" y2="105"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
-    <line x1="768" y1="45"  x2="755" y2="32"   stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
-    <line x1="892" y1="45"  x2="905" y2="32"   stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
-    <line x1="768" y1="165" x2="755" y2="178"  stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
-    <line x1="892" y1="165" x2="905" y2="178"  stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="830" y1="18"  x2="830" y2="0"   stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="830" y1="210" x2="830" y2="228"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="742" y1="105" x2="724" y2="105"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="918" y1="105" x2="936" y2="105"  stroke="#ffd740" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="767" y1="43"  x2="753" y2="29"   stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="893" y1="43"  x2="907" y2="29"   stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="767" y1="167" x2="753" y2="181"  stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="893" y1="167" x2="907" y2="181"  stroke="#ffd740" stroke-width="3.5" stroke-linecap="round"/>
   </g>
-
   <!-- Sun disc -->
-  <circle cx="830" cy="105" r="58" fill="#ffca28"/>
+  <circle class="sun-core" cx="830" cy="105" r="58" fill="#ffca28"/>
   <circle cx="830" cy="105" r="46" fill="#fff176"/>
   <!-- Sun face -->
-  <circle cx="814" cy="98"  r="6" fill="#ff8f00"/>
-  <circle cx="846" cy="98"  r="6" fill="#ff8f00"/>
-  <circle cx="815" cy="97"  r="3" fill="#5d4037"/>
-  <circle cx="847" cy="97"  r="3" fill="#5d4037"/>
-  <path d="M817 113 Q830 122 843 113" stroke="#e65100" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="814" cy="98" r="6"  fill="#ff8f00"/>
+  <circle cx="846" cy="98" r="6"  fill="#ff8f00"/>
+  <circle cx="815" cy="97" r="3"  fill="#5d4037"/>
+  <circle cx="847" cy="97" r="3"  fill="#5d4037"/>
+  <path d="M816 113 Q830 123 844 113" stroke="#e65100" stroke-width="3" fill="none" stroke-linecap="round"/>
 
-  <!-- ═══ CLOUDS ═══ -->
+  <!-- Clouds -->
   <g class="cloud-a">
-    <ellipse cx="160" cy="95"  rx="85"  ry="36" fill="white" opacity="0.93"/>
-    <ellipse cx="115" cy="107" rx="52"  ry="30" fill="white" opacity="0.93"/>
-    <ellipse cx="205" cy="107" rx="58"  ry="30" fill="white" opacity="0.93"/>
-    <ellipse cx="160" cy="112" rx="75"  ry="22" fill="white" opacity="0.93"/>
+    <ellipse cx="160" cy="94"  rx="86"  ry="36" fill="white" opacity=".92"/>
+    <ellipse cx="114" cy="106" rx="53"  ry="30" fill="white" opacity=".92"/>
+    <ellipse cx="206" cy="106" rx="58"  ry="30" fill="white" opacity=".92"/>
+    <ellipse cx="160" cy="112" rx="76"  ry="22" fill="white" opacity=".92"/>
   </g>
   <g class="cloud-b">
-    <ellipse cx="420" cy="65"  rx="65"  ry="27" fill="white" opacity="0.82"/>
-    <ellipse cx="380" cy="75"  rx="42"  ry="23" fill="white" opacity="0.82"/>
-    <ellipse cx="460" cy="75"  rx="45"  ry="23" fill="white" opacity="0.82"/>
+    <ellipse cx="420" cy="64"  rx="66"  ry="27" fill="white" opacity=".80"/>
+    <ellipse cx="380" cy="74"  rx="43"  ry="23" fill="white" opacity=".80"/>
+    <ellipse cx="460" cy="74"  rx="46"  ry="23" fill="white" opacity=".80"/>
   </g>
 
-  <!-- ═══ BACK HILLS (far, light) ═══ -->
-  <ellipse cx="150" cy="415" rx="310" ry="140" fill="#7ad157" opacity="0.45"/>
-  <ellipse cx="710" cy="425" rx="380" ry="145" fill="#62c040" opacity="0.38"/>
+  <!-- Back hills -->
+  <ellipse cx="150" cy="414" rx="310" ry="140" fill="#7ad157" opacity=".42"/>
+  <ellipse cx="710" cy="424" rx="380" ry="145" fill="#62c040" opacity=".36"/>
 
-  <!-- ═══ GROUND ═══ -->
-  <rect x="0" y="390" width="1000" height="210" fill="url(#ground)"/>
+  <!-- Ground -->
+  <rect x="0" y="390" width="1000" height="210" fill="url(#gnd)"/>
+  <path d="M-20 500 Q120 338 310 440 Q400 478 500 470 L500 600 L-20 600 Z" fill="url(#h1)"/>
+  <path d="M500 470 Q650 434 800 450 Q920 458 1020 438 L1020 600 L500 600 Z" fill="url(#h2)"/>
 
-  <!-- Mid hill left -->
-  <path d="M-20 500 Q120 340 310 440 Q400 480 500 470 L500 600 L-20 600 Z"
-        fill="url(#hill1)"/>
-  <!-- Mid hill right -->
-  <path d="M500 470 Q650 435 800 450 Q920 460 1020 440 L1020 600 L500 600 Z"
-        fill="url(#hill2)"/>
+  <!-- Dirt path -->
+  <path d="M1020 540 Q820 510 660 524 Q560 532 490 555 Q420 574 390 600 L600 600 L1020 600 Z"
+        fill="#c49a3c" opacity=".46"/>
 
-  <!-- ═══ DIRT PATH ═══ -->
-  <path d="M1020 540 Q820 510 660 525 Q560 532 490 555 Q420 575 390 600 L600 600 L1020 600 Z"
-        fill="#c49a3c" opacity="0.48"/>
-  <!-- Path edge shading -->
-  <path d="M1020 540 Q820 510 660 525 Q560 532 490 555"
-        stroke="#a07828" stroke-width="2" fill="none" opacity="0.4"/>
-
-  <!-- ═══ LAGOA / LAKE ═══ -->
-  <ellipse cx="360" cy="528" rx="148" ry="50" fill="url(#lake)" opacity="0.88"/>
-  <!-- Shimmer -->
-  <ellipse cx="330" cy="516" rx="55"  ry="10" fill="white" opacity="0.14"/>
-  <ellipse cx="375" cy="536" rx="30"  ry="6"  fill="white" opacity="0.10"/>
-  <!-- Reflection of trees -->
-  <ellipse cx="360" cy="548" rx="80"  ry="18" fill="#2e7d32" opacity="0.18"/>
-  <!-- Water ripples -->
+  <!-- Lake -->
+  <ellipse cx="360" cy="528" rx="148" ry="50" fill="url(#lake)" opacity=".88"/>
+  <ellipse cx="330" cy="516" rx="56"  ry="10" fill="white"      opacity=".13"/>
+  <ellipse cx="375" cy="537" rx="30"  ry="6"  fill="white"      opacity=".09"/>
+  <ellipse cx="360" cy="548" rx="80"  ry="18" fill="#2e7d32"    opacity=".17"/>
   <ellipse class="rpl"  cx="360" cy="528" rx="80" ry="26"
-           fill="none" stroke="#81d4fa" stroke-width="2.5" opacity="0.55"/>
+           fill="none" stroke="#81d4fa" stroke-width="2.5" opacity=".55"/>
   <ellipse class="rpl2" cx="360" cy="528" rx="50" ry="16"
-           fill="none" stroke="#81d4fa" stroke-width="2"   opacity="0.55"/>
+           fill="none" stroke="#81d4fa" stroke-width="2"   opacity=".55"/>
 
-  <!-- ═══ CASINHA / HOUSE ═══ -->
-  <!-- Shadow -->
-  <ellipse cx="645" cy="524" rx="75" ry="12" fill="rgba(0,0,0,0.18)"/>
-  <!-- Body -->
+  <!-- House shadow -->
+  <ellipse cx="645" cy="524" rx="75" ry="12" fill="rgba(0,0,0,.18)"/>
+  <!-- House body -->
   <rect x="588" y="430" width="125" height="95" fill="#f5deb3" rx="4"/>
   <!-- Roof -->
   <polygon points="572,432 728,432 650,365" fill="#c62828"/>
-  <polygon points="572,432 728,432 650,365" fill="none" stroke="#b71c1c" stroke-width="2"/>
-  <!-- Roof ridge detail -->
-  <line x1="650" y1="365" x2="650" y2="432" stroke="#b71c1c" stroke-width="1.5" opacity="0.4"/>
   <!-- Chimney -->
   <rect x="662" y="368" width="20" height="35" fill="#a0522d"/>
   <rect x="658" y="364" width="28" height="8"  fill="#795548" rx="2"/>
   <!-- Smoke -->
-  <circle class="smk" cx="672" cy="358" r="9"  fill="#ccc" opacity="0.5" style="animation-delay:0s"/>
-  <circle class="smk" cx="669" cy="338" r="11" fill="#ccc" opacity="0.35" style="animation-delay:1.2s"/>
-  <circle class="smk" cx="675" cy="318" r="13" fill="#ccc" opacity="0.2"  style="animation-delay:2.4s"/>
+  <circle class="smk" cx="672" cy="357" r="9"  fill="#ccc" opacity=".5"  style="animation-delay:0s"/>
+  <circle class="smk" cx="669" cy="336" r="11" fill="#ccc" opacity=".35" style="animation-delay:1.1s"/>
+  <circle class="smk" cx="675" cy="316" r="13" fill="#ccc" opacity=".2"  style="animation-delay:2.2s"/>
   <!-- Door -->
   <rect x="626" y="477" width="32" height="48" fill="#6d4c41" rx="4"/>
-  <circle cx="655" cy="501" r="3.5" fill="#ffd54f"/>
-  <!-- Door arch -->
   <path d="M626 477 Q642 462 658 477" fill="#5d4037"/>
-  <!-- Window L -->
-  <rect x="592" y="445" width="30" height="26" fill="#b3e5fc" rx="3"
-        stroke="#795548" stroke-width="2"/>
+  <circle cx="655" cy="501" r="3.5" fill="#ffd54f"/>
+  <!-- Windows -->
+  <rect x="592" y="445" width="30" height="26" fill="#b3e5fc" rx="3" stroke="#795548" stroke-width="2"/>
   <line x1="607" y1="445" x2="607" y2="471" stroke="#795548" stroke-width="1.5"/>
   <line x1="592" y1="458" x2="622" y2="458" stroke="#795548" stroke-width="1.5"/>
-  <!-- Window R -->
-  <rect x="678" y="445" width="30" height="26" fill="#b3e5fc" rx="3"
-        stroke="#795548" stroke-width="2"/>
+  <rect x="678" y="445" width="30" height="26" fill="#b3e5fc" rx="3" stroke="#795548" stroke-width="2"/>
   <line x1="693" y1="445" x2="693" y2="471" stroke="#795548" stroke-width="1.5"/>
   <line x1="678" y1="458" x2="708" y2="458" stroke="#795548" stroke-width="1.5"/>
   <!-- Windowsill flowers -->
   <circle cx="592" cy="443" r="4" fill="#ef5350"/>
-  <circle cx="598" cy="441" r="4" fill="#ff7043"/>
-  <circle cx="604" cy="443" r="4" fill="#ffa726"/>
+  <circle cx="599" cy="441" r="4" fill="#ff7043"/>
+  <circle cx="606" cy="443" r="4" fill="#ffa726"/>
 
-  <!-- ═══ TREES ═══ -->
-  <!-- Left tree (big) -->
-  <rect x="118" y="435" width="20" height="90" fill="#6d4c41" rx="4"/>
-  <ellipse cx="128" cy="415" rx="55" ry="38" fill="#2e7d32"/>
-  <ellipse cx="128" cy="395" rx="44" ry="33" fill="#388e3c"/>
-  <ellipse cx="128" cy="377" rx="30" ry="24" fill="#43a047"/>
-  <ellipse cx="128" cy="363" rx="18" ry="15" fill="#66bb6a"/>
-  <!-- fruit -->
-  <circle cx="110" cy="400" r="5"  fill="#e53935"/>
-  <circle cx="145" cy="395" r="5"  fill="#e53935"/>
-  <circle cx="125" cy="408" r="4"  fill="#e53935"/>
+  <!-- Tree left -->
+  <rect x="118" y="434" width="20" height="90" fill="#6d4c41" rx="4"/>
+  <ellipse cx="128" cy="414" rx="55" ry="38" fill="#2e7d32"/>
+  <ellipse cx="128" cy="394" rx="44" ry="33" fill="#388e3c"/>
+  <ellipse cx="128" cy="376" rx="30" ry="24" fill="#43a047"/>
+  <ellipse cx="128" cy="362" rx="18" ry="15" fill="#66bb6a"/>
+  <circle cx="110" cy="400" r="5" fill="#e53935"/>
+  <circle cx="145" cy="395" r="5" fill="#e53935"/>
+  <circle cx="125" cy="408" r="4" fill="#e53935"/>
 
-  <!-- Right tree -->
-  <rect x="800" y="445" width="16" height="75" fill="#6d4c41" rx="3"/>
-  <ellipse cx="808" cy="425" rx="45" ry="33" fill="#1b5e20"/>
-  <ellipse cx="808" cy="407" rx="36" ry="28" fill="#2e7d32"/>
-  <ellipse cx="808" cy="392" rx="25" ry="20" fill="#388e3c"/>
+  <!-- Tree right -->
+  <rect x="800" y="444" width="16" height="75" fill="#6d4c41" rx="3"/>
+  <ellipse cx="808" cy="424" rx="45" ry="33" fill="#1b5e20"/>
+  <ellipse cx="808" cy="406" rx="36" ry="28" fill="#2e7d32"/>
+  <ellipse cx="808" cy="391" rx="25" ry="20" fill="#388e3c"/>
 
-  <!-- Small shrubs -->
-  <ellipse cx="500" cy="475" rx="28" ry="18" fill="#4caf50"/>
-  <ellipse cx="510" cy="468" rx="18" ry="14" fill="#66bb6a"/>
+  <!-- Orange tree (pé de laranja lima) -->
+  <rect x="540" y="462" width="10" height="40" fill="#795548" rx="2"/>
+  <ellipse cx="545" cy="452" rx="25" ry="20" fill="#388e3c"/>
+  <ellipse cx="545" cy="442" rx="18" ry="15" fill="#43a047"/>
+  <circle cx="535" cy="452" r="6"  fill="#ff8f00"/>
+  <circle cx="555" cy="455" r="6"  fill="#ff8f00"/>
+  <circle cx="543" cy="460" r="5"  fill="#ffa726"/>
+
+  <!-- Shrubs -->
+  <ellipse cx="500" cy="474" rx="28" ry="18" fill="#4caf50"/>
+  <ellipse cx="510" cy="467" rx="18" ry="14" fill="#66bb6a"/>
   <ellipse cx="870" cy="480" rx="22" ry="14" fill="#388e3c"/>
   <ellipse cx="878" cy="474" rx="14" ry="11" fill="#4caf50"/>
 
-  <!-- ═══ PALHEIRO / HAY ═══ -->
+  <!-- Hay bale -->
   <rect x="735" y="490" width="50" height="32" fill="#f9a825" rx="4"/>
   <polygon points="725,490 797,490 760,472" fill="#f57f17"/>
-  <line x1="748" y1="490" x2="748" y2="522" stroke="#e65100" stroke-width="1" opacity="0.4"/>
-  <line x1="760" y1="490" x2="760" y2="522" stroke="#e65100" stroke-width="1" opacity="0.4"/>
-  <line x1="772" y1="490" x2="772" y2="522" stroke="#e65100" stroke-width="1" opacity="0.4"/>
+  <line x1="748" y1="490" x2="748" y2="522" stroke="#e65100" stroke-width="1" opacity=".35"/>
+  <line x1="760" y1="490" x2="760" y2="522" stroke="#e65100" stroke-width="1" opacity=".35"/>
+  <line x1="772" y1="490" x2="772" y2="522" stroke="#e65100" stroke-width="1" opacity=".35"/>
 
-  <!-- ═══ SAPO / FROG ═══ -->
+  <!-- Dog -->
+  <g>
+    <!-- Tail (wags) -->
+    <path class="dog-tail" d="M467 488 Q455 477 450 470" stroke="#a1785a" stroke-width="5"
+          fill="none" stroke-linecap="round"/>
+    <!-- Body -->
+    <ellipse cx="485" cy="498" rx="21" ry="12" fill="#c8a26e"/>
+    <!-- Head -->
+    <circle cx="502" cy="490" r="12" fill="#c8a26e"/>
+    <!-- Ear -->
+    <ellipse cx="497" cy="481" rx="5" ry="7"  fill="#a1785a" transform="rotate(-20,497,481)"/>
+    <ellipse cx="508" cy="480" rx="4" ry="6"  fill="#a1785a" transform="rotate(10,508,480)"/>
+    <!-- Eye -->
+    <circle cx="507" cy="488" r="3"  fill="#4e342e"/>
+    <circle cx="508" cy="487" r="1"  fill="white"/>
+    <!-- Nose -->
+    <ellipse cx="514" cy="491" rx="3.5" ry="2.5" fill="#5d4037"/>
+    <!-- Legs -->
+    <rect x="476" y="508" width="6" height="14" rx="3" fill="#b8935c"/>
+    <rect x="487" y="508" width="6" height="14" rx="3" fill="#b8935c"/>
+    <rect x="494" y="508" width="6" height="14" rx="3" fill="#b8935c"/>
+    <rect x="468" y="507" width="6" height="13" rx="3" fill="#b8935c"/>
+  </g>
+
+  <!-- Frog -->
   <g class="frog">
-    <!-- Shadow -->
-    <ellipse cx="295" cy="512" rx="26" ry="7" fill="rgba(0,0,0,0.2)"/>
-    <!-- Hind legs -->
-    <path d="M278 504 Q262 512 255 524" stroke="#388e3c" stroke-width="7"
-          fill="none" stroke-linecap="round"/>
-    <path d="M312 504 Q328 512 335 524" stroke="#388e3c" stroke-width="7"
-          fill="none" stroke-linecap="round"/>
-    <!-- Feet -->
-    <ellipse cx="252" cy="526" rx="10" ry="5" fill="#388e3c"/>
-    <ellipse cx="338" cy="526" rx="10" ry="5" fill="#388e3c"/>
+    <ellipse cx="295" cy="512" rx="26" ry="7" fill="rgba(0,0,0,.18)"/>
+    <!-- Back legs -->
+    <path d="M278 504 Q262 513 254 525" stroke="#388e3c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M312 504 Q328 513 336 525" stroke="#388e3c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <ellipse cx="251" cy="527" rx="10" ry="5" fill="#388e3c"/>
+    <ellipse cx="339" cy="527" rx="10" ry="5" fill="#388e3c"/>
     <!-- Body -->
     <ellipse cx="295" cy="500" rx="25" ry="18" fill="#4caf50"/>
-    <!-- Belly -->
-    <ellipse cx="295" cy="504" rx="16" ry="12" fill="#a5d6a7" opacity="0.6"/>
+    <ellipse cx="295" cy="504" rx="16" ry="12" fill="#a5d6a7" opacity=".6"/>
     <!-- Head -->
-    <ellipse cx="295" cy="483" rx="21" ry="16" fill="#66bb6a"/>
-    <!-- Eyes (bulgy) -->
+    <ellipse cx="295" cy="482" rx="21" ry="16" fill="#66bb6a"/>
+    <!-- Eyes -->
     <circle cx="283" cy="474" r="9"  fill="#c8e6c9"/>
     <circle cx="307" cy="474" r="9"  fill="#c8e6c9"/>
     <circle cx="284" cy="473" r="5"  fill="#1b5e20"/>
     <circle cx="308" cy="473" r="5"  fill="#1b5e20"/>
     <circle cx="286" cy="471" r="2"  fill="white"/>
     <circle cx="310" cy="471" r="2"  fill="white"/>
-    <!-- Mouth (smile) -->
+    <!-- Mouth -->
     <path d="M284 487 Q295 495 306 487" stroke="#2e7d32" stroke-width="2.5"
           fill="none" stroke-linecap="round"/>
     <!-- Front arms -->
-    <path d="M274 498 Q262 503 258 510" stroke="#4caf50" stroke-width="6"
-          fill="none" stroke-linecap="round"/>
-    <path d="M316 498 Q328 503 332 510" stroke="#4caf50" stroke-width="6"
-          fill="none" stroke-linecap="round"/>
+    <path d="M274 498 Q261 503 257 511" stroke="#4caf50" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M316 498 Q329 503 333 511" stroke="#4caf50" stroke-width="6" fill="none" stroke-linecap="round"/>
   </g>
 
-  <!-- ═══ BUTTERFLY ═══ -->
-  <g class="butterfly-body">
-    <g class="butterfly-wings">
-      <path d="M0,-12 Q-18,-28 -22,-8 Q-18,4 0,0 Z"  fill="#ff6f00" opacity="0.88"/>
-      <path d="M0,-12 Q 18,-28  22,-8 Q 18,4 0,0 Z"  fill="#ff6f00" opacity="0.88"/>
-      <path d="M0,0  Q-14, 14 -12,22 Q -6,18 0,10 Z" fill="#ffa000" opacity="0.88"/>
-      <path d="M0,0  Q 14, 14  12,22 Q  6,18 0,10 Z" fill="#ffa000" opacity="0.88"/>
+  <!-- Butterfly -->
+  <g class="bf-body">
+    <g class="bf-wings">
+      <path d="M0,-12 Q-19,-30 -23,-8 Q-19,4  0,0 Z" fill="#ff6f00" opacity=".88"/>
+      <path d="M0,-12 Q 19,-30  23,-8 Q 19,4  0,0 Z" fill="#ff6f00" opacity=".88"/>
+      <path d="M0,  0 Q-14, 14 -12,23 Q -6,18  0,10 Z" fill="#ffa000" opacity=".88"/>
+      <path d="M0,  0 Q 14, 14  12,23 Q  6,18  0,10 Z" fill="#ffa000" opacity=".88"/>
     </g>
-    <!-- Body -->
     <ellipse cx="0" cy="4" rx="2.5" ry="14" fill="#4e342e"/>
-    <!-- Antennae -->
-    <line x1="0" y1="-12" x2="-8" y2="-25" stroke="#4e342e" stroke-width="1.5"/>
-    <line x1="0" y1="-12" x2=" 8" y2="-25" stroke="#4e342e" stroke-width="1.5"/>
-    <circle cx="-8"  cy="-25" r="2.5" fill="#4e342e"/>
-    <circle cx=" 8"  cy="-25" r="2.5" fill="#4e342e"/>
+    <line x1="0" y1="-12" x2="-8" y2="-26" stroke="#4e342e" stroke-width="1.5"/>
+    <line x1="0" y1="-12" x2=" 8" y2="-26" stroke="#4e342e" stroke-width="1.5"/>
+    <circle cx="-8"  cy="-26" r="2.5" fill="#4e342e"/>
+    <circle cx=" 8"  cy="-26" r="2.5" fill="#4e342e"/>
   </g>
 
-  <!-- ═══ BIRDS ═══ -->
+  <!-- Birds -->
   <g class="birds">
-    <path d="M0,0 Q8,-8 16,0"   stroke="#1a237e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q8,-8 16,0"    stroke="#1a237e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
     <path d="M24,-8 Q32,-16 40,-8" stroke="#1a237e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <path d="M12,4  Q20,-4 28,4"   stroke="#1a237e" stroke-width="2"   fill="none" stroke-linecap="round"/>
+    <path d="M12,4 Q20,-4 28,4"   stroke="#1a237e" stroke-width="2"   fill="none" stroke-linecap="round"/>
   </g>
 
-  <!-- ═══ FLOWERS ═══ -->
-  <!-- Cluster left -->
-  <g class="fl" style="transform-origin:68px 522px; animation-delay:0s">
+  <!-- Flowers left -->
+  <g class="fl" style="transform-origin:68px 522px;animation-delay:0s">
     <line x1="68" y1="522" x2="68" y2="498" stroke="#4caf50" stroke-width="3.5"/>
-    <!-- Leaf -->
     <path d="M68 510 Q58 503 56 508 Q60 514 68 510" fill="#66bb6a"/>
     <circle cx="68" cy="492" r="9"  fill="#e53935"/>
     <circle cx="60" cy="496" r="6"  fill="#ef9a9a"/>
@@ -508,7 +527,7 @@
     <circle cx="68" cy="484" r="6"  fill="#ef9a9a"/>
     <circle cx="68" cy="492" r="4"  fill="#ffd54f"/>
   </g>
-  <g class="fl" style="transform-origin:92px 530px; animation-delay:0.6s">
+  <g class="fl" style="transform-origin:92px 530px;animation-delay:.6s">
     <line x1="92" y1="530" x2="92" y2="506" stroke="#4caf50" stroke-width="3"/>
     <circle cx="92" cy="500" r="8"  fill="#ffeb3b"/>
     <circle cx="84" cy="504" r="5"  fill="#fff9c4"/>
@@ -516,7 +535,7 @@
     <circle cx="92" cy="493" r="5"  fill="#fff9c4"/>
     <circle cx="92" cy="500" r="3.5" fill="#ff8f00"/>
   </g>
-  <g class="fl" style="transform-origin:55px 538px; animation-delay:1.3s">
+  <g class="fl" style="transform-origin:55px 538px;animation-delay:1.3s">
     <line x1="55" y1="538" x2="55" y2="520" stroke="#4caf50" stroke-width="3"/>
     <circle cx="55" cy="514" r="7"  fill="#ab47bc"/>
     <circle cx="48" cy="518" r="4.5" fill="#ce93d8"/>
@@ -524,8 +543,8 @@
     <circle cx="55" cy="508" r="4.5" fill="#ce93d8"/>
     <circle cx="55" cy="514" r="3"  fill="#ffd54f"/>
   </g>
-  <!-- Cluster right -->
-  <g class="fl" style="transform-origin:930px 522px; animation-delay:0.3s">
+  <!-- Flowers right -->
+  <g class="fl" style="transform-origin:930px 522px;animation-delay:.3s">
     <line x1="930" y1="522" x2="930" y2="500" stroke="#4caf50" stroke-width="3.5"/>
     <circle cx="930" cy="494" r="9"  fill="#ff7043"/>
     <circle cx="921" cy="498" r="6"  fill="#ffccbc"/>
@@ -533,7 +552,7 @@
     <circle cx="930" cy="486" r="6"  fill="#ffccbc"/>
     <circle cx="930" cy="494" r="4"  fill="#ffd54f"/>
   </g>
-  <g class="fl" style="transform-origin:955px 532px; animation-delay:1.0s">
+  <g class="fl" style="transform-origin:955px 532px;animation-delay:1s">
     <line x1="955" y1="532" x2="955" y2="512" stroke="#4caf50" stroke-width="3"/>
     <circle cx="955" cy="506" r="8"  fill="#ec407a"/>
     <circle cx="947" cy="510" r="5"  fill="#f48fb1"/>
@@ -541,199 +560,307 @@
     <circle cx="955" cy="499" r="5"  fill="#f48fb1"/>
     <circle cx="955" cy="506" r="3.5" fill="#ffd54f"/>
   </g>
-  <g class="fl" style="transform-origin:530px 480px; animation-delay:0.9s">
-    <line x1="530" y1="480" x2="530" y2="463" stroke="#4caf50" stroke-width="2.5"/>
-    <circle cx="530" cy="458" r="7"  fill="#42a5f5"/>
-    <circle cx="523" cy="462" r="4.5" fill="#bbdefb"/>
-    <circle cx="537" cy="462" r="4.5" fill="#bbdefb"/>
-    <circle cx="530" cy="452" r="4.5" fill="#bbdefb"/>
-    <circle cx="530" cy="458" r="3"  fill="#ffd54f"/>
+  <g class="fl" style="transform-origin:530px 480px;animation-delay:.9s">
+    <line x1="530" y1="480" x2="530" y2="462" stroke="#4caf50" stroke-width="2.5"/>
+    <circle cx="530" cy="457" r="7"  fill="#42a5f5"/>
+    <circle cx="523" cy="461" r="4.5" fill="#bbdefb"/>
+    <circle cx="537" cy="461" r="4.5" fill="#bbdefb"/>
+    <circle cx="530" cy="451" r="4.5" fill="#bbdefb"/>
+    <circle cx="530" cy="457" r="3"  fill="#ffd54f"/>
   </g>
 
   <!-- Grass tufts -->
   <g stroke="#2e7d32" stroke-width="2" stroke-linecap="round" fill="none">
-    <path d="M440 472 Q443 459 446 472"/>
-    <path d="M450 470 Q453 457 456 470"/>
-    <path d="M458 471 Q461 458 464 471"/>
-    <path d="M175 478 Q178 465 181 478"/>
-    <path d="M183 476 Q186 463 189 476"/>
-    <path d="M820 472 Q823 459 826 472"/>
-    <path d="M828 470 Q831 457 834 470"/>
-    <path d="M475 476 Q478 463 481 476"/>
+    <path d="M440 472 Q443 459 446 472"/> <path d="M450 470 Q453 457 456 470"/>
+    <path d="M458 471 Q461 458 464 471"/> <path d="M175 478 Q178 465 181 478"/>
+    <path d="M183 476 Q186 463 189 476"/> <path d="M820 472 Q823 459 826 472"/>
+    <path d="M828 470 Q831 457 834 470"/> <path d="M475 476 Q478 463 481 476"/>
   </g>
-
-  <!-- Pé de laranja lima (orange tree near house) -->
-  <rect x="540" y="462" width="10" height="40" fill="#795548" rx="2"/>
-  <ellipse cx="545" cy="452" rx="25" ry="20" fill="#388e3c"/>
-  <ellipse cx="545" cy="442" rx="18" ry="15" fill="#43a047"/>
-  <!-- Laranjas -->
-  <circle cx="535" cy="452" r="6"  fill="#ff8f00"/>
-  <circle cx="555" cy="455" r="6"  fill="#ff8f00"/>
-  <circle cx="543" cy="460" r="5"  fill="#ffa726"/>
-  <!-- Leaves highlight -->
-  <circle cx="540" cy="440" r="4" fill="#66bb6a" opacity="0.5"/>
-
-  <!-- Dog / Cachorrinho -->
-  <g transform="translate(485,488)">
-    <!-- Body -->
-    <ellipse cx="0" cy="0" rx="20" ry="12" fill="#c8a26e"/>
-    <!-- Head -->
-    <circle cx="18" cy="-8" r="11" fill="#c8a26e"/>
-    <!-- Ear -->
-    <ellipse cx="13" cy="-16" rx="5" ry="7" fill="#a1785a" transform="rotate(-20,13,-16)"/>
-    <ellipse cx="23" cy="-17" rx="4" ry="6" fill="#a1785a" transform="rotate(10,23,-17)"/>
-    <!-- Eye -->
-    <circle cx="23" cy="-9" r="3"  fill="#4e342e"/>
-    <circle cx="24" cy="-10" r="1" fill="white"/>
-    <!-- Nose -->
-    <ellipse cx="30" cy="-6" rx="3.5" ry="2.5" fill="#5d4037"/>
-    <!-- Mouth -->
-    <path d="M30 -4 Q32 -1 30 0" stroke="#4e342e" stroke-width="1.5" fill="none"/>
-    <!-- Tail -->
-    <path d="M-18 -4 Q-30 -16 -24 -20" stroke="#a1785a" stroke-width="5"
-          fill="none" stroke-linecap="round"/>
-    <!-- Legs -->
-    <rect x="-10" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
-    <rect x="  2" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
-    <rect x=" 10" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
-    <rect x="-18" y="10"  width="7" height="14" rx="3" fill="#b8935c"/>
-  </g>
-
 </svg>
 
-<!-- ════ TITLE ════ -->
+<!-- Title -->
 <div id="title">
   <h1>Vida Boa</h1>
   <p>Victor &amp; Leo</p>
 </div>
 
-<!-- ════ LYRICS ════ -->
+<!-- Lyrics -->
 <div id="lyrics-wrap">
   <div id="lyric-line"></div>
 </div>
 
-<!-- ════ PROGRESS ════ -->
-<div id="prog-bar">
-  <div id="prog-fill"></div>
-</div>
+<!-- Progress -->
+<div id="prog-bar"><div id="prog-fill"></div></div>
 
 <!-- Play/Pause flash -->
 <div id="pip">▶</div>
 
+<!-- Volume toggle -->
+<div id="vol-badge" title="Ligar/desligar som">🔊</div>
+
 <div id="hint">clique para pausar / retomar</div>
 
 <script>
-  // ──────────────────────────────────────
-  // LETRA — ajuste os textos se necessário
-  // ──────────────────────────────────────
-  const lyrics = [
-    // intro
-    { text: "♪ ♪ ♪", dur: 2500, chorus: false },
+/* ═══════════════════════════════════════════
+   LETRAS  — ajuste se necessário
+═══════════════════════════════════════════ */
+const lyrics = [
+  { t:"♪ ♪ ♪",                            d:2600, c:false },
+  { t:"Moro num lugar",                    d:3100, c:false },
+  { t:"Numa casinha inocente do sertão",   d:3900, c:false },
+  { t:"Com um pé de laranja lima",         d:3200, c:false },
+  { t:"Um cachorrinho fiel de companhão",  d:3900, c:false },
+  { t:"Minha vida é muito simples",        d:3200, c:false },
+  { t:"Mas de graça eu não a troco não",   d:3900, c:false },
+  { t:"Pois eu tenho o que é mais precioso", d:3200, c:false },
+  { t:"Que é saúde e um bom coração",      d:3900, c:false },
+  { t:"♪",                                 d:1900, c:false },
+  { t:"Que vida boa, ô ô ô",               d:3300, c:true  },
+  { t:"Que vida boa",                      d:2800, c:true  },
+  { t:"Sapo caiu na lagoa",                d:3300, c:true  },
+  { t:"Sou eu no caminho do meu sertão",   d:4400, c:true  },
+  { t:"Que vida boa, ô ô ô",               d:3300, c:true  },
+  { t:"Que vida boa",                      d:2800, c:true  },
+  { t:"Sapo caiu na lagoa",                d:3300, c:true  },
+  { t:"Sou eu no caminho do meu sertão",   d:4400, c:true  },
+  { t:"♪",                                 d:1900, c:false },
+  { t:"Tenho o sol da madrugada",          d:3200, c:false },
+  { t:"Tenho o brilho da manhã",           d:3200, c:false },
+  { t:"Tenho a chuva que molha a terra",   d:3200, c:false },
+  { t:"E o arco-íris que vem lá",          d:3600, c:false },
+  { t:"Os pássaros cantando na varanda",   d:3200, c:false },
+  { t:"A borboleta voando pelo ar",        d:3600, c:false },
+  { t:"♪",                                 d:1900, c:false },
+  { t:"Que vida boa, ô ô ô",               d:3300, c:true  },
+  { t:"Que vida boa",                      d:2800, c:true  },
+  { t:"Sapo caiu na lagoa",                d:3300, c:true  },
+  { t:"Sou eu no caminho do meu sertão",   d:4400, c:true  },
+  { t:"Que vida boa, ô ô ô",               d:3300, c:true  },
+  { t:"Que vida boa",                      d:2800, c:true  },
+  { t:"Sapo caiu na lagoa",                d:3300, c:true  },
+  { t:"Sou eu no caminho do meu sertão",   d:4800, c:true  },
+  { t:"🎵  Vida Boa  🎵",                  d:5000, c:true  },
+];
 
-    // Verso 1
-    { text: "Moro num lugar", dur: 3000, chorus: false },
-    { text: "Numa casinha inocente do sertão", dur: 3800, chorus: false },
-    { text: "Com um pé de laranja lima", dur: 3200, chorus: false },
-    { text: "Um cachorrinho fiel de companhão", dur: 3800, chorus: false },
-    { text: "Minha vida é muito simples", dur: 3200, chorus: false },
-    { text: "Mas de graça eu não a troco não", dur: 3800, chorus: false },
-    { text: "Pois eu tenho o que é mais precioso", dur: 3200, chorus: false },
-    { text: "Que é saúde e um bom coração", dur: 3800, chorus: false },
+/* ═══════════════════════════════════════════
+   WEB AUDIO — melodia sertaneja sintética
+═══════════════════════════════════════════ */
+const F = {
+  G2:98, A2:110, B2:123,
+  C3:131, D3:147, E3:165, G3:196, A3:220, B3:247,
+  C4:262, D4:294, E4:330, G4:392, A4:440, B4:494,
+  C5:523, D5:587, E5:659, G5:784
+};
 
-    // Refrão
-    { text: "♪", dur: 1800, chorus: false },
-    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
-    { text: "Que vida boa", dur: 2800, chorus: true },
-    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
-    { text: "Sou eu no caminho do meu sertão", dur: 4200, chorus: true },
+const BPM  = 116;
+const B    = 60 / BPM;          // beat duration in seconds
+const BARS = 8;
+const LOOP = BARS * 4 * B;      // total loop duration
 
-    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
-    { text: "Que vida boa", dur: 2800, chorus: true },
-    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
-    { text: "Sou eu no caminho do meu sertão", dur: 4200, chorus: true },
+/* Melody: [freq, beats] */
+const MEL = [
+  [F.G4,1],[F.B4,.5],[F.D5,.5],[F.E5,1],[F.D5,1],
+  [F.B4,2],[F.G4,2],
+  [F.A4,1],[F.G4,.5],[F.A4,.5],[F.B4,1],[F.A4,1],
+  [F.G4,4],
+  [F.D5,.5],[F.E5,.5],[F.G5,1],[F.E5,1],[F.D5,1],
+  [F.B4,1.5],[F.A4,.5],[F.G4,2],
+  [F.A4,.5],[F.B4,.5],[F.D5,1],[F.B4,1],[F.G4,1],
+  [F.D4,2],[F.G4,2],
+];
 
-    // Verso 2
-    { text: "♪", dur: 1800, chorus: false },
-    { text: "Tenho o sol da madrugada", dur: 3200, chorus: false },
-    { text: "Tenho o brilho da manhã", dur: 3200, chorus: false },
-    { text: "Tenho a chuva que molha a terra", dur: 3200, chorus: false },
-    { text: "E o arco-íris que vem lá", dur: 3500, chorus: false },
-    { text: "Os pássaros cantando na varanda", dur: 3200, chorus: false },
-    { text: "A borboleta que voa pelo ar", dur: 3500, chorus: false },
+/* Bass: [freq, beats] — root-fifth per 2 beats */
+const BASS = [
+  [F.G2,2],[F.D3,2],
+  [F.C3,2],[F.G3,2],
+  [F.D3,2],[F.A3,2],
+  [F.G2,4],
+  [F.G2,2],[F.D3,2],
+  [F.C3,2],[F.G3,2],
+  [F.D3,2],[F.A3,2],
+  [F.G2,4],
+];
 
-    // Refrão final
-    { text: "♪", dur: 1800, chorus: false },
-    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
-    { text: "Que vida boa", dur: 2800, chorus: true },
-    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
-    { text: "Sou eu no caminho do meu sertão", dur: 4200, chorus: true },
+let actx = null;
+let muted = false;
+let masterGain = null;
 
-    { text: "Que vida boa, ô ô ô", dur: 3200, chorus: true },
-    { text: "Que vida boa", dur: 2800, chorus: true },
-    { text: "Sapo caiu na lagoa", dur: 3200, chorus: true },
-    { text: "Sou eu no caminho do meu sertão", dur: 4800, chorus: true },
+function initAudio() {
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = actx.createGain();
+  masterGain.gain.value = 0.7;
+  masterGain.connect(actx.destination);
+  scheduleLoop(actx.currentTime + 0.1);
+}
 
-    // Fim
-    { text: "🎵  Vida Boa  🎵", dur: 5000, chorus: true },
-  ];
+function scheduleLoop(t0) {
+  schedMelody(t0);
+  schedBass(t0);
+  schedPercussion(t0);
+  const ahead = (t0 - actx.currentTime + LOOP - 0.6) * 1000;
+  setTimeout(() => scheduleLoop(t0 + LOOP), Math.max(0, ahead));
+}
 
-  const lineEl    = document.getElementById('lyric-line');
-  const progFill  = document.getElementById('prog-fill');
-  const pip       = document.getElementById('pip');
-
-  const totalDur  = lyrics.reduce((s, l) => s + l.dur, 0);
-  let idx         = 0;
-  let elapsed     = 0;
-  let playing     = true;
-  let tid         = null;
-
-  function show(i) {
-    if (i >= lyrics.length) {
-      elapsed = 0; idx = 0; show(0); return;
-    }
-    const item = lyrics[i];
-
-    lineEl.classList.remove('on', 'chorus');
-    lineEl.style.opacity = '0';
-
-    setTimeout(() => {
-      lineEl.textContent = item.text;
-      if (item.chorus) lineEl.classList.add('chorus');
-      lineEl.classList.add('on');
-
-      tid = setTimeout(() => {
-        elapsed += item.dur;
-        idx++;
-        updateProg();
-        show(idx);
-      }, item.dur);
-    }, 320);
+function schedMelody(t0) {
+  let t = t0;
+  for (const [freq, beats] of MEL) {
+    const dur = beats * B;
+    playNote(freq, t, dur * 0.88, 0.38, 'triangle');
+    t += dur;
   }
+}
 
-  function updateProg() {
-    const pct = Math.min((elapsed / totalDur) * 100, 100);
-    progFill.style.width = pct + '%';
+function schedBass(t0) {
+  let t = t0;
+  for (const [freq, beats] of BASS) {
+    const dur = beats * B;
+    playNote(freq, t, dur * 0.82, 0.32, 'sine');
+    t += dur;
   }
+}
 
-  function toggle() {
-    if (playing) {
-      clearTimeout(tid);
-      playing = false;
-      pip.textContent = '▶';
-    } else {
-      playing = true;
-      pip.textContent = '⏸';
-      show(idx);
-    }
-    pip.classList.add('show');
-    clearTimeout(pip._t);
-    pip._t = setTimeout(() => pip.classList.remove('show'), 900);
+function schedPercussion(t0) {
+  const totalBeats = BARS * 4;
+  for (let i = 0; i < totalBeats; i++) {
+    const t = t0 + i * B;
+    const beat = i % 4;
+    if (beat === 0 || beat === 2) playKick(t);
+    if (beat === 1 || beat === 3) playSnare(t);
+    playHat(t);
+    playHat(t + B * 0.5);
   }
+}
 
-  document.body.addEventListener('click', toggle);
+function playNote(freq, start, dur, vol, type) {
+  const osc  = actx.createOscillator();
+  const gain = actx.createGain();
+  const flt  = actx.createBiquadFilter();
+  flt.type = 'lowpass';
+  flt.frequency.value = 3000;
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, start);
+  gain.gain.linearRampToValueAtTime(vol, start + 0.025);
+  gain.gain.setValueAtTime(vol * 0.75, start + dur * 0.55);
+  gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  osc.connect(flt); flt.connect(gain); gain.connect(masterGain);
+  osc.start(start); osc.stop(start + dur + 0.05);
+}
 
-  // Start after a short intro pause
-  setTimeout(() => show(0), 1200);
+function playKick(t) {
+  const osc  = actx.createOscillator();
+  const gain = actx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(155, t);
+  osc.frequency.exponentialRampToValueAtTime(48, t + 0.18);
+  gain.gain.setValueAtTime(0.55, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+  osc.connect(gain); gain.connect(masterGain);
+  osc.start(t); osc.stop(t + 0.32);
+}
+
+function noise(dur) {
+  const n   = Math.ceil(actx.sampleRate * dur);
+  const buf = actx.createBuffer(1, n, actx.sampleRate);
+  const d   = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+  const src = actx.createBufferSource();
+  src.buffer = buf;
+  return src;
+}
+
+function playSnare(t) {
+  const src  = noise(0.18);
+  const flt  = actx.createBiquadFilter();
+  flt.type = 'bandpass'; flt.frequency.value = 1600; flt.Q.value = 0.5;
+  const gain = actx.createGain();
+  gain.gain.setValueAtTime(0.28, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+  src.connect(flt); flt.connect(gain); gain.connect(masterGain);
+  src.start(t); src.stop(t + 0.2);
+}
+
+function playHat(t) {
+  const src  = noise(0.06);
+  const flt  = actx.createBiquadFilter();
+  flt.type = 'highpass'; flt.frequency.value = 7200;
+  const gain = actx.createGain();
+  gain.gain.setValueAtTime(0.07, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.055);
+  src.connect(flt); flt.connect(gain); gain.connect(masterGain);
+  src.start(t); src.stop(t + 0.07);
+}
+
+/* ═══════════════════════════════════════════
+   LYRICS ENGINE
+═══════════════════════════════════════════ */
+const lineEl   = document.getElementById('lyric-line');
+const progFill = document.getElementById('prog-fill');
+const pip      = document.getElementById('pip');
+
+const totalMs  = lyrics.reduce((s, l) => s + l.d, 0);
+let idx     = 0;
+let elapsed = 0;
+let playing = false;
+let tid     = null;
+
+function showLyric(i) {
+  if (i >= lyrics.length) { elapsed = 0; idx = 0; showLyric(0); return; }
+  const item = lyrics[i];
+  lineEl.classList.remove('on','chorus');
+  void lineEl.offsetWidth; // reflow to restart transition
+  setTimeout(() => {
+    lineEl.textContent = item.t;
+    if (item.c) lineEl.classList.add('chorus');
+    lineEl.classList.add('on');
+    tid = setTimeout(() => {
+      elapsed += item.d; idx++;
+      progFill.style.width = Math.min(elapsed / totalMs * 100, 100) + '%';
+      showLyric(idx);
+    }, item.d);
+  }, 300);
+}
+
+function pauseResume() {
+  if (!playing) return;
+  if (tid) {
+    clearTimeout(tid); tid = null;
+    lineEl.classList.remove('on');
+    pip.textContent = '▶'; pip.classList.add('show');
+    playing = false;
+  } else {
+    playing = true;
+    pip.textContent = '⏸'; pip.classList.add('show');
+    showLyric(idx);
+  }
+  clearTimeout(pip._t);
+  pip._t = setTimeout(() => pip.classList.remove('show'), 900);
+}
+
+/* ═══════════════════════════════════════════
+   START
+═══════════════════════════════════════════ */
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('start-screen').style.display = 'none';
+  initAudio();
+  playing = true;
+  setTimeout(() => showLyric(0), 600);
+});
+
+document.body.addEventListener('click', (e) => {
+  if (e.target.closest('#start-screen') ||
+      e.target.closest('#vol-badge')) return;
+  pauseResume();
+});
+
+/* Volume toggle */
+const volBadge = document.getElementById('vol-badge');
+volBadge.addEventListener('click', () => {
+  if (!actx) return;
+  muted = !muted;
+  masterGain.gain.value = muted ? 0 : 0.7;
+  volBadge.textContent = muted ? '🔇' : '🔊';
+});
 </script>
 
 </body>
