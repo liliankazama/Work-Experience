@@ -1,0 +1,19 @@
+{
+  "name": "ifood-calendar-live",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "get-refresh-token": "node scripts/get-refresh-token.mjs"
+  },
+  "dependencies": {
+    "@react-oauth/google": "latest",
+    "googleapis": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {}
+}
